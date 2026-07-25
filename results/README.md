@@ -7,7 +7,9 @@ superseded model iterations should be regenerated rather than accumulated.
 | --- | --- |
 | `natural-trace-skew-rq1/` | RQ1 natural-order, post-merge zone-skew characterization and placement sensitivity |
 | `static-baseline-study/` | Corrected strict static-zone characterization baseline |
+| `rq2-skew-threshold/` | Dense request-skew sweep with merge, throughput crossings, and ownership cost |
 | `static-zone-work-stealing-study/` | 8-zone hotspot and one-helper distance motivation study |
+| `adaptive-zone-upper-bound/` | Equal-size static zones versus physically contiguous batch-oracle adaptive zones |
 
 Superseded Zipf, artificial temporal-skew, and batch-skew outputs moved to
 `archive/results/`. Matching active configurations live in `experiments/`;

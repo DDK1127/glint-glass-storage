@@ -7,13 +7,15 @@ storage library.
 
 ## Current Research Status
 
-The active repository contains three connected studies:
+The active repository contains five connected studies:
 
 | Study | Question | Current result |
 | --- | --- | --- |
 | RQ1 natural skew | Does natural post-merge demand remain spatially skewed? | Randomized placement shows short bursts; sustained skew is placement-dependent. |
 | Static baseline | What does fixed ownership cost under a hotspot? | Hot zones queue while other shuttle-reader resources become idle. |
+| RQ2 skew threshold | How much merged request skew materially reduces static-zone throughput? | A dense request-skew sweep measures the curve and operational loss crossings. |
 | Work stealing | Does any idle helper provide the same benefit? | Nearby helpers recover more completion time per unit of added travel. |
+| Adaptive-zone upper bound | How much can physically valid workload-balanced boundaries recover? | Paired static/adaptive runs isolate the cost of equal-area ownership. |
 
 The current story and evidence boundaries are documented in
 [`docs/research/static-zone-hotspot-work-stealing.md`](docs/research/static-zone-hotspot-work-stealing.md).
@@ -50,7 +52,9 @@ The unified CLI defaults to smoke configurations:
 ```bash
 glint-sim rq1
 glint-sim static-baseline
+glint-sim skew-threshold
 glint-sim work-stealing
+glint-sim adaptive-zone-upper-bound
 ```
 
 Run a full experiment by selecting its full config:

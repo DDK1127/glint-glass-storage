@@ -25,10 +25,20 @@ from .natural_trace_skew import (
     run_natural_trace_skew_study,
     write_natural_trace_skew_outputs,
 )
+from .adaptive_zone_study import (
+    load_adaptive_zone_study_config,
+    run_adaptive_zone_study,
+    write_adaptive_zone_outputs,
+)
 from .static_baseline_study import (
     load_static_baseline_study_config,
     run_static_baseline_study,
     write_static_baseline_study_outputs,
+)
+from .skew_threshold_study import (
+    load_skew_threshold_config,
+    run_skew_threshold_study,
+    write_skew_threshold_outputs,
 )
 from .work_stealing_study import (
     load_work_stealing_study_config,
@@ -57,9 +67,21 @@ def main() -> None:
     )
     _add_command(
         subparsers,
+        "skew-threshold",
+        "Measure merged-workload throughput as request skew increases.",
+        "rq2-skew-threshold",
+    )
+    _add_command(
+        subparsers,
         "work-stealing",
         "Measure one-helper work-stealing tradeoffs.",
         "work-stealing",
+    )
+    _add_command(
+        subparsers,
+        "adaptive-zone-upper-bound",
+        "Compare equal-size static zones with batch-oracle adaptive boundaries.",
+        "adaptive-zone-upper-bound",
     )
     args = parser.parse_args()
 
@@ -67,8 +89,12 @@ def main() -> None:
         _run_rq1(args.config)
     elif args.command == "static-baseline":
         _run_static_baseline(args.config)
-    else:
+    elif args.command == "skew-threshold":
+        _run_skew_threshold(args.config)
+    elif args.command == "work-stealing":
         _run_work_stealing(args.config)
+    else:
+        _run_adaptive_zone(args.config)
 
 
 def _add_command(
@@ -112,6 +138,20 @@ def _run_static_baseline(config_path: str) -> None:
     )
 
 
+def _run_skew_threshold(config_path: str) -> None:
+    config = load_skew_threshold_config(config_path)
+    result = run_skew_threshold_study(config)
+    write_skew_threshold_outputs(config, result)
+    _print(
+        {
+            "output_dir": str(config.output_dir),
+            "runs": len(result.run_rows),
+            "aggregate_rows": len(result.aggregate_rows),
+            "validation_passed": result.validation["passed"],
+        }
+    )
+
+
 def _run_work_stealing(config_path: str) -> None:
     config = load_work_stealing_study_config(config_path)
     study = run_work_stealing_study(config)
@@ -122,6 +162,20 @@ def _run_work_stealing(config_path: str) -> None:
             "static_runs": len(study.static_runs),
             "helper_runs": len(study.helper_runs),
             "aggregate_rows": len(study.aggregate_rows),
+        }
+    )
+
+
+def _run_adaptive_zone(config_path: str) -> None:
+    config = load_adaptive_zone_study_config(config_path)
+    study = run_adaptive_zone_study(config)
+    write_adaptive_zone_outputs(config, study)
+    _print(
+        {
+            "output_dir": str(config.output_dir),
+            "runs": len(study.run_rows),
+            "aggregate_rows": len(study.aggregate_rows),
+            "validation_passed": study.validation["passed"],
         }
     )
 

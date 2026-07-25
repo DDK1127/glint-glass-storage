@@ -16,6 +16,7 @@ dist/
 .mplconfig/
 results/.cache/
 results/.mplconfig/
+results/*-smoke/
 
 # Large local research inputs
 data/*.csv
