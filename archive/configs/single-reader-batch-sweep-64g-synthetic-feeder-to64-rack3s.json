@@ -1,0 +1,51 @@
+{
+  "trace_path": "data/2016022211-LUN0.csv",
+  "output_dir": "outputs/single-reader-batch-sweep-64g-synthetic-feeder-to64-rack3s",
+  "max_requests": 10000,
+  "arrival_mode": "batch_at_t0",
+  "request_merge": true,
+  "batch_sizes": [100, 500, 1000, 2000, 3000, 5000, 10000],
+  "shuttle_counts": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64],
+  "geometry": {
+    "levels": 8,
+    "slots_per_rack": 100,
+    "rack_length_m": 4.0,
+    "reader_level": 4,
+    "reader_slot": 99,
+    "platter_capacity_bytes": 68719476736,
+    "placement_mode": "synthetic_hash",
+    "synthetic_stripe_bytes": 67108864,
+    "synthetic_platter_count": 8192,
+    "synthetic_hash_seed": 20260615
+  },
+  "movement": {
+    "horizontal_max_m_s": 2.0,
+    "horizontal_accel_m_s2": 2.0,
+    "horizontal_min_s": 1.0,
+    "vertical_s_per_level": 3.0
+  },
+  "reader": {
+    "count": 1
+  },
+  "timing": {
+    "storage_pick_s": 3.0,
+    "storage_place_s": 3.0,
+    "reader_load_s": 3.0,
+    "reader_unload_s": 3.0,
+    "reader_mount_s": 1.0,
+    "reader_base_s": 0.00035,
+    "reader_mib_per_s": 60.0
+  },
+  "feeder_buffer": {
+    "enabled": true,
+    "slots": 64,
+    "shuttle_place_s": 3.0,
+    "return_policy": "fetch_priority"
+  },
+  "conflict_penalty": {
+    "enabled": true,
+    "penalty_s": 0.5,
+    "window_s": 0.0
+  },
+  "saturation_threshold": 0.05
+}

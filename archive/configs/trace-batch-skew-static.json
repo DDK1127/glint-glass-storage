@@ -1,0 +1,51 @@
+{
+  "output_dir": "outputs/trace-batch-skew-static",
+  "trace_path": "data/2016022211-LUN0-readonly-head-100k-sorted.csv",
+  "max_read_requests": 100000,
+  "batch_size": 5000,
+  "order_seed": 20260710,
+  "workloads": [
+    {
+      "name": "normal",
+      "display_name": "Normal batches",
+      "target_hot_request_fraction": null
+    },
+    {
+      "name": "moderate_skew",
+      "display_name": "Moderate skew",
+      "target_hot_request_fraction": 0.5
+    },
+    {
+      "name": "severe_skew",
+      "display_name": "Severe skew",
+      "target_hot_request_fraction": 0.8
+    }
+  ],
+  "placement": {
+    "stripe_bytes": 67108864,
+    "platter_count": 6400,
+    "hash_seed": 20260615
+  },
+  "geometry": {
+    "levels": 8,
+    "zone_height_racks": 2,
+    "half_panel_length_m": 16.0,
+    "slots_per_half": 400,
+    "glass_capacity_bytes": 8589934592
+  },
+  "movement": {
+    "horizontal_max_m_s": 2.0,
+    "horizontal_accel_m_s2": 2.0,
+    "horizontal_min_s": 1.0,
+    "vertical_s_per_level": 3.0
+  },
+  "timing": {
+    "storage_pick_s": 3.0,
+    "reader_load_s": 3.0,
+    "reader_unload_s": 3.0,
+    "storage_place_s": 3.0,
+    "reader_mount_s": 1.0,
+    "reader_base_s": 0.00035,
+    "reader_mib_per_s": 60.0
+  }
+}

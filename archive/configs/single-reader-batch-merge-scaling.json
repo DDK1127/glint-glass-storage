@@ -1,0 +1,41 @@
+{
+  "trace_path": "data/2016022211-LUN0-readonly-head-100k-sorted.csv",
+  "output_dir": "outputs/single-reader-batch-merge-scaling",
+  "max_requests": 10000,
+  "arrival_mode": "batch_at_t0",
+  "request_merge": true,
+  "batch_sizes": [100, 500, 1000, 2500, 5000, 10000],
+  "shuttle_counts": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+  "geometry": {
+    "levels": 8,
+    "slots_per_rack": 100,
+    "rack_length_m": 4.0,
+    "reader_level": 4,
+    "reader_slot": 99,
+    "platter_capacity_bytes": 67108864
+  },
+  "movement": {
+    "horizontal_max_m_s": 2.0,
+    "horizontal_accel_m_s2": 2.0,
+    "horizontal_min_s": 1.0,
+    "vertical_s_per_level": 3.0
+  },
+  "reader": {
+    "count": 1
+  },
+  "timing": {
+    "storage_pick_s": 0.72,
+    "storage_place_s": 0.55,
+    "reader_load_s": 3.0,
+    "reader_unload_s": 3.0,
+    "reader_mount_s": 1.0,
+    "reader_base_s": 0.00035,
+    "reader_mib_per_s": 60.0
+  },
+  "conflict_penalty": {
+    "enabled": true,
+    "penalty_s": 0.5,
+    "window_s": 0.0
+  },
+  "saturation_threshold": 0.05
+}

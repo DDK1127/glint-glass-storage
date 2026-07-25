@@ -1,0 +1,22 @@
+{
+  "trace_path": "data/2016022211-LUN0-readonly-head-100k-sorted.csv",
+  "output_dir": "outputs/v2-default",
+  "max_requests": 100000,
+  "architecture": {
+    "rows": 64,
+    "columns": 128,
+    "rows_per_zone": 8,
+    "reader_count": 4,
+    "feeder_buffer_slots": 128,
+    "glass_capacity_bytes": 68719476736
+  },
+  "timing": {
+    "zone_pick_s": 1.2,
+    "zone_place_s": 1.2,
+    "horizontal_slot_s": 0.04,
+    "return_pick_s": 1.0,
+    "return_place_s": 1.0,
+    "reader_fixed_s": 0.002,
+    "reader_mib_per_s": 250.0
+  }
+}

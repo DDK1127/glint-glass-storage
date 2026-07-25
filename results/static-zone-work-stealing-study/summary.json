@@ -1,0 +1,115 @@
+{
+  "config": {
+    "output_dir": "results/static-zone-work-stealing-study",
+    "seeds": [
+      20260710,
+      20260711,
+      20260712,
+      20260713,
+      20260714
+    ],
+    "hotspot_fractions": [
+      0.125,
+      0.5,
+      0.8
+    ],
+    "strong_hotspot_fraction": 0.8,
+    "task_count": 640,
+    "request_size_bytes": 67108864,
+    "hot_zone": 0,
+    "helper_zones": [
+      1,
+      2,
+      4,
+      7
+    ],
+    "geometry": {
+      "levels": 8,
+      "zone_height_racks": 2,
+      "half_panel_length_m": 16.0,
+      "slots_per_half": 400,
+      "glass_capacity_bytes": 8589934592
+    },
+    "movement": {
+      "horizontal_max_m_s": 2.0,
+      "horizontal_accel_m_s2": 2.0,
+      "horizontal_min_s": 1.0,
+      "vertical_s_per_level": 3.0
+    },
+    "timing": {
+      "storage_pick_s": 3.0,
+      "reader_load_s": 3.0,
+      "reader_unload_s": 3.0,
+      "storage_place_s": 3.0,
+      "reader_mount_s": 1.0,
+      "reader_base_s": 0.00035,
+      "reader_mib_per_s": 60.0
+    }
+  },
+  "findings": {
+    "static_hotspot": {
+      "balanced_fraction": 0.125,
+      "strong_fraction": 0.8,
+      "balanced_makespan_h": 0.7391590260873292,
+      "strong_makespan_h": 4.589544713860581,
+      "makespan_ratio": 6.209143840338279,
+      "balanced_capacity_efficiency": 0.967678420627594,
+      "strong_capacity_efficiency": 0.15638870026797985,
+      "strong_stranded_capacity_share": 0.8436112997320202
+    },
+    "one_helper_distance": [
+      {
+        "helper_zone": 2,
+        "route_hops": 1.0,
+        "home_to_hot_center_s": 6.0,
+        "stolen_tasks": 208.8,
+        "makespan_h": 2.7242100561493734,
+        "makespan_reduction_fraction": 0.4064192255383081,
+        "extra_travel_h": 0.6838065491335052
+      },
+      {
+        "helper_zone": 1,
+        "route_hops": 1.0,
+        "home_to_hot_center_s": 9.020050125313283,
+        "stolen_tasks": 197.8,
+        "makespan_h": 2.7746549229189594,
+        "makespan_reduction_fraction": 0.39541467015803017,
+        "extra_travel_h": 0.785437860929461
+      },
+      {
+        "helper_zone": 4,
+        "route_hops": 2.0,
+        "home_to_hot_center_s": 12.0,
+        "stolen_tasks": 180.2,
+        "makespan_h": 2.9614283583517587,
+        "makespan_reduction_fraction": 0.35472614400767033,
+        "extra_travel_h": 1.1773257434484534
+      },
+      {
+        "helper_zone": 7,
+        "route_hops": 4.0,
+        "home_to_hot_center_s": 27.020050125313283,
+        "stolen_tasks": 136.8,
+        "makespan_h": 3.3332201134861887,
+        "makespan_reduction_fraction": 0.2737159261382772,
+        "extra_travel_h": 1.9108108660573717
+      }
+    ]
+  },
+  "model_scope": {
+    "modeled": [
+      "8 fixed zones",
+      "single-zone hotspot",
+      "one fixed helper",
+      "cross-zone movement time",
+      "helper-local reader service",
+      "return to original glass slot"
+    ],
+    "not_modeled": [
+      "route conflicts",
+      "collision waiting",
+      "multiple-helper ingress congestion",
+      "online threshold oscillation"
+    ]
+  }
+}

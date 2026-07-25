@@ -1,0 +1,84 @@
+{
+  "output_dir": "results/natural-trace-skew-rq1",
+  "trace_path": "data/2016022211-LUN0.csv",
+  "max_read_requests": null,
+  "request_count_windows": [
+    100,
+    500,
+    1000,
+    5000,
+    10000,
+    20000,
+    50000
+  ],
+  "time_windows_s": [
+    1.0,
+    5.0,
+    15.0,
+    30.0,
+    60.0,
+    120.0,
+    300.0,
+    600.0,
+    900.0
+  ],
+  "hotspot_work_share_threshold": 0.25,
+  "primary_count_window": 5000,
+  "primary_time_window_s": 60.0,
+  "heatmap_placement": "hash_seed_1",
+  "validation_sample_windows": 8,
+  "stripe_bytes": 67108864,
+  "platter_count": 6400,
+  "placements": [
+    {
+      "name": "hash_seed_1",
+      "display_name": "Hash seed 1",
+      "family": "randomized_hash",
+      "mode": "hash",
+      "hash_seed": 20260615
+    },
+    {
+      "name": "hash_seed_2",
+      "display_name": "Hash seed 2",
+      "family": "randomized_hash",
+      "mode": "hash",
+      "hash_seed": 20260616
+    },
+    {
+      "name": "hash_seed_3",
+      "display_name": "Hash seed 3",
+      "family": "randomized_hash",
+      "mode": "hash",
+      "hash_seed": 20260617
+    },
+    {
+      "name": "contiguous_lba",
+      "display_name": "Contiguous LBA",
+      "family": "contiguous_lba",
+      "mode": "contiguous_lba",
+      "hash_seed": null
+    }
+  ],
+  "geometry": {
+    "levels": 8,
+    "zone_height_racks": 2,
+    "half_panel_length_m": 16.0,
+    "slots_per_half": 400,
+    "glass_capacity_bytes": 8589934592
+  },
+  "movement": {
+    "horizontal_max_m_s": 2.0,
+    "horizontal_accel_m_s2": 2.0,
+    "horizontal_min_s": 1.0,
+    "vertical_s_per_level": 3.0
+  },
+  "timing": {
+    "storage_pick_s": 3.0,
+    "reader_load_s": 3.0,
+    "reader_unload_s": 3.0,
+    "storage_place_s": 3.0,
+    "reader_mount_s": 1.0,
+    "reader_base_s": 0.00035,
+    "reader_mib_per_s": 60.0
+  }
+}

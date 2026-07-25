@@ -1,0 +1,45 @@
+{
+  "output_dir": "outputs/static-zone-v1-smoke",
+  "seed": 20260709,
+  "zone_counts": [2, 4],
+  "policies": ["static_zone", "shared_pool"],
+  "write_detail": true,
+  "geometry": {
+    "levels": 8,
+    "slots_per_rack": 400,
+    "rack_length_m": 16.0,
+    "reader_level": 4,
+    "glass_capacity_bytes": 8589934592
+  },
+  "movement": {
+    "horizontal_max_m_s": 2.0,
+    "horizontal_accel_m_s2": 2.0,
+    "horizontal_min_s": 1.0,
+    "vertical_s_per_level": 3.0
+  },
+  "timing": {
+    "storage_pick_s": 3.0,
+    "storage_place_s": 3.0,
+    "reader_load_s": 1.0,
+    "reader_unload_s": 1.0,
+    "reader_mount_s": 0.1,
+    "reader_base_s": 0.00035,
+    "reader_mib_per_s": 600.0
+  },
+  "feeder_buffer": {
+    "enabled": true,
+    "slots": 16,
+    "allow_shuttle_holding": false
+  },
+  "workload": {
+    "batch_size": 1000,
+    "request_size_bytes": 67108864,
+    "skew_cases": ["uniform", "heavy_skew"],
+    "moderate_hot_fraction": 0.5,
+    "heavy_hot_fraction": 0.8,
+    "shifting_hot_fraction": 0.8,
+    "shifting_phase_count": 4,
+    "shifting_phase_gap_s": 600.0,
+    "hot_zone": 0
+  }
+}

@@ -1,0 +1,220 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1040" role="img" aria-labelledby="title desc">
+  <title id="title">Project Silica work stealing and helper locality tradeoff</title>
+  <desc id="desc">A teaching diagram showing static partitions, Microsoft Project Silica's load-imbalance fallback, the cost of choosing a distant cold helper, and the motivation for locality-aware bounded assistance.</desc>
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#233044" flood-opacity="0.10"/>
+    </filter>
+    <marker id="arrowPurple" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#7256B5"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#348264"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#BC5B52"/>
+    </marker>
+    <style>
+      text { font-family: "Hiragino Sans TC", "Heiti TC", "Arial Unicode MS", sans-serif; letter-spacing: 0; fill: #233044; }
+      .title { font-size: 36px; font-weight: 750; }
+      .subtitle { font-size: 18px; fill: #596579; }
+      .section { font-size: 23px; font-weight: 720; }
+      .label { font-size: 17px; font-weight: 680; }
+      .body { font-size: 15px; fill: #465268; }
+      .small { font-size: 13px; fill: #596579; }
+      .zoneTitle { font-size: 16px; font-weight: 720; }
+      .zoneBody { font-size: 12px; fill: #596579; }
+      .card { fill: #FFFFFF; stroke: #D4DAE4; stroke-width: 1.5; rx: 8; filter: url(#shadow); }
+      .zone { fill: #F4F5F7; stroke: #8A94A5; stroke-width: 1.5; rx: 6; }
+      .hot { fill: #FFF0EF; stroke: #BC5B52; stroke-width: 2.5; rx: 6; }
+      .cold { fill: #EAF2FF; stroke: #4777B8; stroke-width: 2; rx: 6; }
+      .near { fill: #E9F7F1; stroke: #348264; stroke-width: 2.5; rx: 6; }
+      .busy { fill: #FFF4DF; stroke: #B87925; stroke-width: 2; rx: 6; }
+      .localPath { fill: none; stroke: #348264; stroke-width: 3; marker-end: url(#arrowGreen); }
+      .stealPath { fill: none; stroke: #7256B5; stroke-width: 5; stroke-dasharray: 11 8; marker-end: url(#arrowPurple); }
+      .riskPath { fill: none; stroke: #BC5B52; stroke-width: 2.5; stroke-dasharray: 6 5; marker-end: url(#arrowRed); }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1040" fill="#F7F8FA"/>
+
+  <text x="70" y="62" class="title">Work stealing 解決 load imbalance，但 helper locality 決定實際代價</text>
+  <text x="70" y="94" class="subtitle">Microsoft Project Silica 的 fallback mechanism，以及「最冷的 zone 不一定是最佳 helper」的研究動機</text>
+
+  <!-- Static partition motivation -->
+  <rect x="70" y="125" width="1460" height="170" class="card"/>
+  <rect x="94" y="146" width="182" height="30" rx="4" fill="#EAF2FF" stroke="#4777B8"/>
+  <text x="108" y="167" class="small" style="font-weight:700; fill:#2F66AD">SOURCE-BACKED MECHANISM</text>
+  <text x="305" y="170" class="section">正常模式：static partitions 將 shuttle traffic 限制在各自服務區域</text>
+  <text x="305" y="197" class="body">優點是 local routing 可預測、traffic management 較簡單，也能降低 reader ingress congestion。</text>
+
+  <g transform="translate(105,218)">
+    <g transform="translate(0,0)">
+      <rect width="158" height="54" class="zone"/><text x="14" y="23" class="zoneTitle">Zone 0</text><text x="14" y="42" class="zoneBody">local shuttle + reader</text>
+      <path d="M105 17 C130 5, 140 39, 112 39" class="localPath"/>
+    </g>
+    <g transform="translate(178,0)">
+      <rect width="158" height="54" class="zone"/><text x="14" y="23" class="zoneTitle">Zone 1</text><text x="14" y="42" class="zoneBody">local shuttle + reader</text>
+      <path d="M105 17 C130 5, 140 39, 112 39" class="localPath"/>
+    </g>
+    <g transform="translate(356,0)">
+      <rect width="158" height="54" class="zone"/><text x="14" y="23" class="zoneTitle">Zone 2</text><text x="14" y="42" class="zoneBody">local shuttle + reader</text>
+      <path d="M105 17 C130 5, 140 39, 112 39" class="localPath"/>
+    </g>
+    <g transform="translate(534,0)">
+      <rect width="158" height="54" class="zone"/><text x="14" y="23" class="zoneTitle">Zone 3</text><text x="14" y="42" class="zoneBody">local shuttle + reader</text>
+      <path d="M105 17 C130 5, 140 39, 112 39" class="localPath"/>
+    </g>
+    <g transform="translate(712,0)">
+      <rect width="158" height="54" class="zone"/><text x="14" y="23" class="zoneTitle">Zone 4</text><text x="14" y="42" class="zoneBody">local shuttle + reader</text>
+      <path d="M105 17 C130 5, 140 39, 112 39" class="localPath"/>
+    </g>
+    <g transform="translate(890,0)">
+      <rect width="158" height="54" class="zone"/><text x="14" y="23" class="zoneTitle">Zone 5</text><text x="14" y="42" class="zoneBody">local shuttle + reader</text>
+      <path d="M105 17 C130 5, 140 39, 112 39" class="localPath"/>
+    </g>
+    <g transform="translate(1068,0)">
+      <rect width="158" height="54" class="zone"/><text x="14" y="23" class="zoneTitle">Zone 6</text><text x="14" y="42" class="zoneBody">local shuttle + reader</text>
+      <path d="M105 17 C130 5, 140 39, 112 39" class="localPath"/>
+    </g>
+    <g transform="translate(1246,0)">
+      <rect width="158" height="54" class="zone"/><text x="14" y="23" class="zoneTitle">Zone 7</text><text x="14" y="42" class="zoneBody">local shuttle + reader</text>
+      <path d="M105 17 C130 5, 140 39, 112 39" class="localPath"/>
+    </g>
+  </g>
+
+  <!-- Left scenario -->
+  <rect x="70" y="325" width="710" height="500" class="card"/>
+  <text x="100" y="366" class="section">A. Load imbalance fallback</text>
+  <text x="100" y="394" class="body">當 hot 與 light partition 的 load difference 超過 threshold，lightly loaded shuttle 可跨區協助。</text>
+  <rect x="100" y="416" width="210" height="27" rx="4" fill="#F1ECFF" stroke="#7256B5"/>
+  <text x="113" y="435" class="small" style="font-weight:700; fill:#6045A1">跨區路徑為 shortest-path routing</text>
+  <text x="494" y="436" class="small">概念配置：4 rows × 2 sides</text>
+
+  <!-- Left 4x2 zone grid -->
+  <g transform="translate(105,470)">
+    <g><rect width="210" height="64" class="hot"/><text x="14" y="25" class="zoneTitle" style="fill:#A9443C">Zone 0 · OVERLOADED</text><text x="14" y="47" class="zoneBody">long queue / local owner bottleneck</text></g>
+    <g transform="translate(230,0)"><rect width="210" height="64" class="zone"/><text x="14" y="25" class="zoneTitle">Zone 1</text><text x="14" y="47" class="zoneBody">moderate load</text></g>
+    <g transform="translate(0,82)"><rect width="210" height="64" class="busy"/><text x="14" y="25" class="zoneTitle" style="fill:#9B641D">Zone 2</text><text x="14" y="47" class="zoneBody">nearby, lightly loaded</text></g>
+    <g transform="translate(230,82)"><rect width="210" height="64" class="busy"/><text x="14" y="25" class="zoneTitle" style="fill:#9B641D">Zone 3 · BUSY PATH</text><text x="14" y="47" class="zoneBody">existing local traffic</text></g>
+    <g transform="translate(0,164)"><rect width="210" height="64" class="zone"/><text x="14" y="25" class="zoneTitle">Zone 4</text><text x="14" y="47" class="zoneBody">moderate load</text></g>
+    <g transform="translate(230,164)"><rect width="210" height="64" class="busy"/><text x="14" y="25" class="zoneTitle" style="fill:#9B641D">Zone 5 · BUSY PATH</text><text x="14" y="47" class="zoneBody">existing local traffic</text></g>
+    <g transform="translate(0,246)"><rect width="210" height="64" class="zone"/><text x="14" y="25" class="zoneTitle">Zone 6</text><text x="14" y="47" class="zoneBody">moderate load</text></g>
+    <g transform="translate(230,246)"><rect width="210" height="64" class="cold"/><text x="14" y="25" class="zoneTitle" style="fill:#2F66AD">Zone 7 · COLDEST</text><text x="14" y="47" class="zoneBody">naive load-only donor</text></g>
+
+    <path d="M335 278 L335 215 L335 133 L335 32 L205 32" class="stealPath"/>
+    <circle cx="335" cy="278" r="10" fill="#7256B5"/>
+    <rect x="182" y="12" width="23" height="39" rx="3" fill="#FFFFFF" stroke="#7256B5" stroke-width="2"/>
+    <line x1="187" y1="21" x2="200" y2="21" stroke="#7256B5" stroke-width="2"/>
+    <line x1="187" y1="28" x2="200" y2="28" stroke="#7256B5" stroke-width="2"/>
+    <line x1="187" y1="35" x2="200" y2="35" stroke="#7256B5" stroke-width="2"/>
+  </g>
+
+  <g transform="translate(570,470)">
+    <rect width="178" height="77" rx="6" fill="#FFF0EF" stroke="#BC5B52"/>
+    <text x="13" y="23" class="label" style="fill:#A9443C">Direct movement cost</text>
+    <text x="13" y="46" class="small">reposition + platter round trip</text>
+    <text x="13" y="65" class="small">+ helper recovery</text>
+  </g>
+  <g transform="translate(570,560)">
+    <rect width="178" height="77" rx="6" fill="#FFF4DF" stroke="#B87925"/>
+    <text x="13" y="23" class="label" style="fill:#9B641D">Path exposure</text>
+    <text x="13" y="46" class="small">busy-zone waiting, slowdown,</text>
+    <text x="13" y="65" class="small">reservation or detour risk</text>
+  </g>
+  <g transform="translate(570,650)">
+    <rect width="178" height="111" rx="6" fill="#FFF0EF" stroke="#BC5B52"/>
+    <text x="13" y="23" class="label" style="fill:#A9443C">Ingress congestion</text>
+    <text x="13" y="46" class="small">multiple helpers converge</text>
+    <circle cx="42" cy="78" r="9" fill="#7256B5"/><circle cx="89" cy="78" r="9" fill="#7256B5"/><circle cx="136" cy="78" r="9" fill="#7256B5"/>
+    <path d="M42 78 L82 96" class="riskPath"/><path d="M89 78 L89 96" class="riskPath"/><path d="M136 78 L96 96" class="riskPath"/>
+  </g>
+  <text x="100" y="803" class="small">注意："coldest donor" 是要檢驗的 naive baseline，不是論文明確規定的唯一選擇規則。</text>
+
+  <!-- Right scenario -->
+  <rect x="820" y="325" width="710" height="500" class="card"/>
+  <text x="850" y="366" class="section">B. Locality-aware helper selection</text>
+  <text x="850" y="394" class="body">同樣有 idle capacity 時，先估計誰能提供最高 net benefit，而不是只看誰最空。</text>
+  <rect x="850" y="416" width="240" height="27" rx="4" fill="#E9F7F1" stroke="#348264"/>
+  <text x="863" y="435" class="small" style="font-weight:700; fill:#267458">研究方向：locality-aware + bounded</text>
+
+  <g transform="translate(855,470)">
+    <g><rect width="210" height="64" class="hot"/><text x="14" y="25" class="zoneTitle" style="fill:#A9443C">Zone 0 · OVERLOADED</text><text x="14" y="47" class="zoneBody">same hot queue</text></g>
+    <g transform="translate(230,0)"><rect width="210" height="64" class="zone"/><text x="14" y="25" class="zoneTitle">Zone 1</text><text x="14" y="47" class="zoneBody">moderate load</text></g>
+    <g transform="translate(0,82)"><rect width="210" height="64" class="near"/><text x="14" y="25" class="zoneTitle" style="fill:#267458">Zone 2 · SELECTED</text><text x="14" y="47" class="zoneBody">nearby and lightly loaded</text></g>
+    <g transform="translate(230,82)"><rect width="210" height="64" class="busy"/><text x="14" y="25" class="zoneTitle" style="fill:#9B641D">Zone 3 · BUSY</text><text x="14" y="47" class="zoneBody">avoid crossing its local path</text></g>
+    <g transform="translate(0,164)"><rect width="210" height="64" class="zone"/><text x="14" y="25" class="zoneTitle">Zone 4</text><text x="14" y="47" class="zoneBody">moderate load</text></g>
+    <g transform="translate(230,164)"><rect width="210" height="64" class="busy"/><text x="14" y="25" class="zoneTitle" style="fill:#9B641D">Zone 5 · BUSY</text><text x="14" y="47" class="zoneBody">avoid crossing its local path</text></g>
+    <g transform="translate(0,246)"><rect width="210" height="64" class="zone"/><text x="14" y="25" class="zoneTitle">Zone 6</text><text x="14" y="47" class="zoneBody">moderate load</text></g>
+    <g transform="translate(230,246)"><rect width="210" height="64" class="cold"/><text x="14" y="25" class="zoneTitle" style="fill:#2F66AD">Zone 7 · COLDEST</text><text x="14" y="47" class="zoneBody">not selected: too far</text></g>
+
+    <path d="M105 104 L105 54" class="stealPath"/>
+    <circle cx="105" cy="104" r="10" fill="#348264"/>
+    <rect x="93" y="16" width="23" height="39" rx="3" fill="#FFFFFF" stroke="#348264" stroke-width="2"/>
+    <line x1="98" y1="25" x2="111" y2="25" stroke="#348264" stroke-width="2"/>
+    <line x1="98" y1="32" x2="111" y2="32" stroke="#348264" stroke-width="2"/>
+    <line x1="98" y1="39" x2="111" y2="39" stroke="#348264" stroke-width="2"/>
+  </g>
+
+  <g transform="translate(1320,470)">
+    <rect width="178" height="86" rx="6" fill="#E9F7F1" stroke="#348264"/>
+    <text x="13" y="23" class="label" style="fill:#267458">Why Zone 2?</text>
+    <text x="13" y="47" class="small">short repositioning</text>
+    <text x="13" y="66" class="small">fewer crossed zones</text>
+  </g>
+  <g transform="translate(1320,570)">
+    <rect width="178" height="108" rx="6" fill="#EAF2FF" stroke="#4777B8"/>
+    <text x="13" y="23" class="label" style="fill:#2F66AD">Experimental signal</text>
+    <text x="13" y="47" class="small">Zone 2: −40.6% makespan</text>
+    <text x="13" y="66" class="small">+0.68 h travel</text>
+    <text x="13" y="89" class="small">Zone 7: −27.4%</text>
+    <text x="13" y="108" class="small">+1.91 h travel</text>
+  </g>
+  <g transform="translate(1320,692)">
+    <rect width="178" height="69" rx="6" fill="#FFF4DF" stroke="#B87925"/>
+    <text x="13" y="23" class="label" style="fill:#9B641D">Bound assistance</text>
+    <text x="13" y="47" class="small">limit hops + helper count</text>
+  </g>
+  <text x="850" y="803" class="small">實驗值為目前 collision-free single-helper model；intermediate-zone waiting 尚未計入。</text>
+
+  <!-- Decision rule -->
+  <rect x="70" y="855" width="1460" height="145" class="card"/>
+  <text x="100" y="893" class="section">核心決策：不要問「哪個 zone 最冷？」；要問「這次 stealing 的淨收益是否為正？」</text>
+
+  <g transform="translate(100,920)">
+    <rect width="265" height="54" rx="6" fill="#E9F7F1" stroke="#348264" stroke-width="2"/>
+    <text x="18" y="23" class="label" style="fill:#267458">Benefit</text>
+    <text x="18" y="43" class="small">hot-zone completion reduction</text>
+  </g>
+  <text x="382" y="955" class="section">&gt;</text>
+  <g transform="translate(420,920)">
+    <rect width="220" height="54" rx="6" fill="#FFF0EF" stroke="#BC5B52"/>
+    <text x="15" y="23" class="label" style="fill:#A9443C">Distance cost</text>
+    <text x="15" y="43" class="small">reposition + platter return</text>
+  </g>
+  <text x="652" y="954" class="section">+</text>
+  <g transform="translate(682,920)">
+    <rect width="220" height="54" rx="6" fill="#FFF4DF" stroke="#B87925"/>
+    <text x="15" y="23" class="label" style="fill:#9B641D">Path cost</text>
+    <text x="15" y="43" class="small">intermediate-zone load</text>
+  </g>
+  <text x="914" y="954" class="section">+</text>
+  <g transform="translate(944,920)">
+    <rect width="220" height="54" rx="6" fill="#FFF0EF" stroke="#BC5B52"/>
+    <text x="15" y="23" class="label" style="fill:#A9443C">Ingress cost</text>
+    <text x="15" y="43" class="small">simultaneous helpers</text>
+  </g>
+  <path d="M1188 947 L1250 947" class="localPath"/>
+  <g transform="translate(1265,913)">
+    <rect width="230" height="68" rx="6" fill="#F1ECFF" stroke="#7256B5" stroke-width="2"/>
+    <text x="17" y="28" class="label" style="fill:#6045A1">Steal only if worthwhile</text>
+    <text x="17" y="50" class="small">locality-aware, bounded helper</text>
+  </g>
+
+  <!-- Legend -->
+  <g transform="translate(970,116)">
+    <line x1="0" y1="10" x2="48" y2="10" class="localPath"/><text x="60" y="15" class="small">local service</text>
+    <line x1="170" y1="10" x2="218" y2="10" class="stealPath"/><text x="232" y="15" class="small">cross-zone stealing</text>
+    <rect x="395" y="0" width="20" height="20" class="busy"/><text x="425" y="15" class="small">busy path / congestion risk</text>
+  </g>
+</svg>

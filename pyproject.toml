@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "glint-glass-storage"
+version = "0.1.0"
+description = "GLINT trace-driven static-zone glass storage research simulator"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "matplotlib==3.10.8",
+  "numpy==2.4.3",
+]
+
+[project.scripts]
+glint-sim = "glass_sim.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["glass_sim*"]

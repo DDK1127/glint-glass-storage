@@ -1,0 +1,38 @@
+{
+  "trace_path": "data/systor-traces-sample-sorted.csv",
+  "output_dir": "outputs/single-reader-scaling-smoke",
+  "max_requests": 1000,
+  "shuttle_counts": [1, 2, 3, 4],
+  "geometry": {
+    "levels": 8,
+    "slots_per_rack": 100,
+    "rack_length_m": 4.0,
+    "reader_level": 4,
+    "reader_slot": 99,
+    "platter_capacity_bytes": 67108864
+  },
+  "movement": {
+    "horizontal_max_m_s": 2.0,
+    "horizontal_accel_m_s2": 2.0,
+    "horizontal_min_s": 1.0,
+    "vertical_s_per_level": 3.0
+  },
+  "reader": {
+    "count": 1
+  },
+  "timing": {
+    "storage_pick_s": 0.72,
+    "storage_place_s": 0.55,
+    "reader_load_s": 3.0,
+    "reader_unload_s": 3.0,
+    "reader_mount_s": 1.0,
+    "reader_base_s": 0.00035,
+    "reader_mib_per_s": 60.0
+  },
+  "conflict_penalty": {
+    "enabled": true,
+    "penalty_s": 0.5,
+    "window_s": 0.0
+  },
+  "saturation_threshold": 0.05
+}

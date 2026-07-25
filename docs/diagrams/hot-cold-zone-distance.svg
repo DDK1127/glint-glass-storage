@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Hot zone and cold helper zone are far apart in a rectangular panel</title>
+  <desc id="desc">A rectangular panel with four zones on the left and four on the right. Zone 0 at the upper left is hot, Zone 7 at the lower right is cold, and a long dashed path crosses intermediate zones.</desc>
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="7" flood-color="#233044" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 Z" fill="#7256B5"/>
+    </marker>
+    <style>
+      text { font-family: "Hiragino Sans TC", "Heiti TC", "Arial Unicode MS", sans-serif; letter-spacing: 0; fill: #233044; }
+      .title { font-size: 38px; font-weight: 750; }
+      .subtitle { font-size: 18px; fill: #657087; }
+      .zoneTitle { font-size: 23px; font-weight: 720; }
+      .zoneBody { font-size: 15px; fill: #657087; }
+      .zone { fill: #F4F5F7; stroke: #A3ACBA; stroke-width: 1.5; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="900" fill="#F7F8FA"/>
+  <text x="800" y="68" text-anchor="middle" class="title">Hot zone 與 cold helper 可能位於面板兩端</text>
+  <text x="800" y="101" text-anchor="middle" class="subtitle">Rectangular panel · 4 zones on each side</text>
+
+  <!-- Rectangular glass panel -->
+  <g transform="translate(245,150)" filter="url(#shadow)">
+    <rect width="1110" height="570" rx="8" fill="#FFFFFF" stroke="#707B8E" stroke-width="3"/>
+    <line x1="555" y1="0" x2="555" y2="570" stroke="#707B8E" stroke-width="3"/>
+
+    <!-- Left side: Zones 0, 2, 4, 6 -->
+    <g transform="translate(25,25)">
+      <rect width="505" height="115" rx="6" fill="#FFF0EF" stroke="#BC5B52" stroke-width="3"/>
+      <text x="25" y="38" class="zoneTitle" style="fill:#A9443C">Zone 0 · HOT</text>
+      <text x="25" y="67" class="zoneBody">Overloaded queue</text>
+      <g transform="translate(352,31)">
+        <rect width="110" height="9" rx="4" fill="#BC5B52"/>
+        <rect y="21" width="86" height="9" rx="4" fill="#D47A72"/>
+        <rect y="42" width="63" height="9" rx="4" fill="#E2A29C"/>
+      </g>
+    </g>
+    <g transform="translate(25,160)"><rect width="505" height="115" rx="6" class="zone"/><text x="25" y="45" class="zoneTitle">Zone 2</text></g>
+    <g transform="translate(25,295)"><rect width="505" height="115" rx="6" class="zone"/><text x="25" y="45" class="zoneTitle">Zone 4</text></g>
+    <g transform="translate(25,430)"><rect width="505" height="115" rx="6" class="zone"/><text x="25" y="45" class="zoneTitle">Zone 6</text></g>
+
+    <!-- Right side: Zones 1, 3, 5, 7 -->
+    <g transform="translate(580,25)"><rect width="505" height="115" rx="6" class="zone"/><text x="25" y="45" class="zoneTitle">Zone 1</text></g>
+    <g transform="translate(580,160)"><rect width="505" height="115" rx="6" class="zone"/><text x="25" y="45" class="zoneTitle">Zone 3</text></g>
+    <g transform="translate(580,295)"><rect width="505" height="115" rx="6" class="zone"/><text x="25" y="45" class="zoneTitle">Zone 5</text></g>
+    <g transform="translate(580,430)">
+      <rect width="505" height="115" rx="6" fill="#EAF2FF" stroke="#4777B8" stroke-width="3"/>
+      <text x="25" y="38" class="zoneTitle" style="fill:#2F66AD">Zone 7 · COLD / HELPER</text>
+      <text x="25" y="67" class="zoneBody">Lightly loaded shuttle</text>
+      <g transform="translate(393,28)">
+        <rect width="70" height="43" rx="5" fill="#FFFFFF" stroke="#4777B8" stroke-width="2"/>
+        <circle cx="15" cy="48" r="9" fill="#2F66AD"/>
+        <circle cx="55" cy="48" r="9" fill="#2F66AD"/>
+      </g>
+    </g>
+
+    <!-- Long route: Zone 7 -> Zone 5 -> Zone 3 -> Zone 1 -> Zone 0 -->
+    <path d="M1015 488 L1015 352 L1015 217 L1015 82 L505 82"
+          fill="none" stroke="#7256B5" stroke-width="6" stroke-dasharray="14 10" marker-end="url(#arrow)"/>
+    <circle cx="1015" cy="488" r="10" fill="#7256B5"/>
+
+    <rect x="670" y="58" width="280" height="47" rx="6" fill="#FFFFFF" stroke="#7256B5" stroke-width="1.5"/>
+    <text x="810" y="89" text-anchor="middle" style="font-size:19px; font-weight:700; fill:#6045A1">Long cross-zone travel</text>
+  </g>
+
+  <text x="800" y="780" text-anchor="middle" class="subtitle">The helper must pass through intermediate zones before reaching the hot queue.</text>
+  <g transform="translate(600,816)">
+    <line x1="0" y1="10" x2="68" y2="10" stroke="#7256B5" stroke-width="5" stroke-dasharray="12 8" marker-end="url(#arrow)"/>
+    <text x="88" y="16" class="zoneBody">cross-zone helper path</text>
+  </g>
+</svg>

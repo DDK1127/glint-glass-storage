@@ -1,0 +1,39 @@
+{
+  "output_dir": "results/static-baseline-study",
+  "seeds": [20260710, 20260711, 20260712, 20260713, 20260714],
+  "hot_zone_fractions": [0.125, 0.25, 0.5, 0.8],
+  "primary_hotspot_width": 1,
+  "hotspot_widths": [1, 2, 4],
+  "width_sensitivity_hot_fraction": 0.8,
+  "active_zone_counts": [1, 2, 4, 8],
+  "active_task_count": 640,
+  "merge_modes": [true],
+  "write_representative_details": true,
+  "geometry": {
+    "levels": 8,
+    "zone_height_racks": 2,
+    "half_panel_length_m": 16.0,
+    "slots_per_half": 400,
+    "glass_capacity_bytes": 8589934592
+  },
+  "movement": {
+    "horizontal_max_m_s": 2.0,
+    "horizontal_accel_m_s2": 2.0,
+    "horizontal_min_s": 1.0,
+    "vertical_s_per_level": 3.0
+  },
+  "timing": {
+    "storage_pick_s": 3.0,
+    "reader_load_s": 3.0,
+    "reader_unload_s": 3.0,
+    "storage_place_s": 3.0,
+    "reader_mount_s": 1.0,
+    "reader_base_s": 0.00035,
+    "reader_mib_per_s": 60.0
+  },
+  "workload": {
+    "batch_size": 10000,
+    "request_size_bytes": 67108864,
+    "hot_zone": 0
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "output_dir": "outputs/static-zone-workload-suite",
+  "seeds": [20260710, 20260711, 20260712, 20260713, 20260714],
+  "batch_size": 10000,
+  "request_size_bytes": 67108864,
+  "hot_zone": 0,
+  "cases": [
+    {
+      "name": "uniform_random",
+      "display_name": "Uniform random",
+      "family": "uniform",
+      "generator": "uniform_random"
+    },
+    {
+      "name": "uniform_scan",
+      "display_name": "Uniform local scan",
+      "family": "uniform",
+      "generator": "uniform_scan"
+    },
+    {
+      "name": "hotspot_50_single",
+      "display_name": "50% single hotspot",
+      "family": "spatial_hotspot",
+      "generator": "spatial_hotspot",
+      "hot_zone_fraction": 0.5,
+      "hotspot_width": 1
+    },
+    {
+      "name": "hotspot_80_single",
+      "display_name": "80% single hotspot",
+      "family": "spatial_hotspot",
+      "generator": "spatial_hotspot",
+      "hot_zone_fraction": 0.8,
+      "hotspot_width": 1
+    },
+    {
+      "name": "hotspot_80_dual",
+      "display_name": "80% dual hotspot",
+      "family": "spatial_hotspot",
+      "generator": "spatial_hotspot",
+      "hot_zone_fraction": 0.8,
+      "hotspot_width": 2
+    },
+    {
+      "name": "zipf_1_05_random",
+      "display_name": "Zipf 1.05 random",
+      "family": "zipf",
+      "generator": "zipf",
+      "zipf_alpha": 1.05,
+      "rank_placement": "random"
+    },
+    {
+      "name": "zipf_1_05_clustered",
+      "display_name": "Zipf 1.05 clustered",
+      "family": "zipf",
+      "generator": "zipf",
+      "zipf_alpha": 1.05,
+      "rank_placement": "clustered"
+    },
+    {
+      "name": "zipf_1_20_random",
+      "display_name": "Zipf 1.20 random",
+      "family": "zipf",
+      "generator": "zipf",
+      "zipf_alpha": 1.2,
+      "rank_placement": "random"
+    },
+    {
+      "name": "zipf_1_20_clustered",
+      "display_name": "Zipf 1.20 clustered",
+      "family": "zipf",
+      "generator": "zipf",
+      "zipf_alpha": 1.2,
+      "rank_placement": "clustered"
+    },
+    {
+      "name": "zipf_1_30_random",
+      "display_name": "Zipf 1.30 random",
+      "family": "zipf",
+      "generator": "zipf",
+      "zipf_alpha": 1.3,
+      "rank_placement": "random"
+    },
+    {
+      "name": "zipf_1_30_clustered",
+      "display_name": "Zipf 1.30 clustered",
+      "family": "zipf",
+      "generator": "zipf",
+      "zipf_alpha": 1.3,
+      "rank_placement": "clustered"
+    }
+  ],
+  "geometry": {
+    "levels": 8,
+    "zone_height_racks": 2,
+    "half_panel_length_m": 16.0,
+    "slots_per_half": 400,
+    "glass_capacity_bytes": 8589934592
+  },
+  "movement": {
+    "horizontal_max_m_s": 2.0,
+    "horizontal_accel_m_s2": 2.0,
+    "horizontal_min_s": 1.0,
+    "vertical_s_per_level": 3.0
+  },
+  "timing": {
+    "storage_pick_s": 3.0,
+    "reader_load_s": 3.0,
+    "reader_unload_s": 3.0,
+    "storage_place_s": 3.0,
+    "reader_mount_s": 1.0,
+    "reader_base_s": 0.00035,
+    "reader_mib_per_s": 60.0
+  }
+}

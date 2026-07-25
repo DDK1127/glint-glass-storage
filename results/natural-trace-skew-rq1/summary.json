@@ -1,0 +1,399 @@
+{
+  "source": {
+    "read_requests": 1399055,
+    "trace_span_s": 3598.2433519363403,
+    "raw_out_of_order_adjacent_pairs": 342819,
+    "timestamp_order_normalized": true,
+    "trace_path": "data/2016022211-LUN0.csv",
+    "trace_bytes": 36156877824,
+    "request_signature_sha256": "dc81ba58348d517d3b15e31d93da00455a625d71116d101d0117bf444897192a",
+    "min_stripe_id": 2,
+    "max_stripe_id": 75792,
+    "zone_count": 8,
+    "balanced_zone_share": 0.125
+  },
+  "findings": {
+    "scope": {
+      "read_requests": 1399055,
+      "trace_span_s": 3598.2433519363403,
+      "natural_timestamp_order": true,
+      "artificial_request_reordering": false
+    },
+    "randomized_placement": {
+      "smallest_count_window": 100,
+      "smallest_work_share_p95": 0.4707789027564284,
+      "primary_count_window": 5000,
+      "primary_work_share_p95": 0.1767721036033263,
+      "primary_hot_window_fraction": 0.0,
+      "largest_count_window": 50000,
+      "largest_work_share_p95": 0.1413761996160303,
+      "primary_time_window_s": 60.0,
+      "time_work_share_p95": 0.14831890962954578
+    },
+    "placement_sensitivity": {
+      "primary_randomized_work_share_p95": 0.1767721036033263,
+      "primary_contiguous_work_share_p95": 0.5563467433748661
+    },
+    "rq1_interpretation": {
+      "classification": "short_burst_and_placement_correlated",
+      "short_burst_above_threshold": true,
+      "sustained_randomized_above_threshold": false,
+      "placement_correlated_above_threshold": true,
+      "threshold": 0.25
+    },
+    "validation": {
+      "passed": true,
+      "window_invariants": {
+        "passed": true,
+        "checked_window_configurations": 64,
+        "failures": []
+      },
+      "work_estimator": {
+        "passed": true,
+        "sample_count": 32,
+        "physical_task_counts_match": true,
+        "mean_absolute_share_error": 0.0021282646213626128,
+        "max_absolute_share_error": 0.019734051465007396,
+        "acceptance": "mean error <= 0.03, max error <= 0.08, exact merge cardinality"
+      },
+      "sample_rows": [
+        {
+          "placement": "hash_seed_1",
+          "window_index": 0,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 511,
+          "exact_physical_tasks": 511,
+          "predicted_max_zone_work_share": 0.1441642312912167,
+          "exact_max_zone_work_share": 0.14474356151457848,
+          "absolute_error": 0.0005793302233617903
+        },
+        {
+          "placement": "hash_seed_1",
+          "window_index": 40,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 712,
+          "exact_physical_tasks": 712,
+          "predicted_max_zone_work_share": 0.16072030274700858,
+          "exact_max_zone_work_share": 0.1600525137079731,
+          "absolute_error": 0.0006677890390354713
+        },
+        {
+          "placement": "hash_seed_1",
+          "window_index": 79,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 634,
+          "exact_physical_tasks": 634,
+          "predicted_max_zone_work_share": 0.14015966287086112,
+          "exact_max_zone_work_share": 0.13823439655553166,
+          "absolute_error": 0.0019252663153294658
+        },
+        {
+          "placement": "hash_seed_1",
+          "window_index": 119,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 542,
+          "exact_physical_tasks": 542,
+          "predicted_max_zone_work_share": 0.14352922395496223,
+          "exact_max_zone_work_share": 0.14482630659473883,
+          "absolute_error": 0.0012970826397765978
+        },
+        {
+          "placement": "hash_seed_1",
+          "window_index": 159,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 252,
+          "exact_physical_tasks": 252,
+          "predicted_max_zone_work_share": 0.1507903021648108,
+          "exact_max_zone_work_share": 0.15054254618112783,
+          "absolute_error": 0.0002477559836829568
+        },
+        {
+          "placement": "hash_seed_1",
+          "window_index": 199,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 769,
+          "exact_physical_tasks": 769,
+          "predicted_max_zone_work_share": 0.13566179335447115,
+          "exact_max_zone_work_share": 0.13574780610924672,
+          "absolute_error": 8.60127547755718e-05
+        },
+        {
+          "placement": "hash_seed_1",
+          "window_index": 238,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 655,
+          "exact_physical_tasks": 655,
+          "predicted_max_zone_work_share": 0.13412444779909835,
+          "exact_max_zone_work_share": 0.13479613751598502,
+          "absolute_error": 0.0006716897168866642
+        },
+        {
+          "placement": "hash_seed_1",
+          "window_index": 278,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 415,
+          "exact_physical_tasks": 415,
+          "predicted_max_zone_work_share": 0.15268289449209743,
+          "exact_max_zone_work_share": 0.15129578431821836,
+          "absolute_error": 0.0013871101738790748
+        },
+        {
+          "placement": "hash_seed_2",
+          "window_index": 0,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 510,
+          "exact_physical_tasks": 510,
+          "predicted_max_zone_work_share": 0.15489307018683696,
+          "exact_max_zone_work_share": 0.154526704480299,
+          "absolute_error": 0.00036636570653794664
+        },
+        {
+          "placement": "hash_seed_2",
+          "window_index": 40,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 706,
+          "exact_physical_tasks": 706,
+          "predicted_max_zone_work_share": 0.14540769266589265,
+          "exact_max_zone_work_share": 0.1424156237470957,
+          "absolute_error": 0.002992068918796942
+        },
+        {
+          "placement": "hash_seed_2",
+          "window_index": 79,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 635,
+          "exact_physical_tasks": 635,
+          "predicted_max_zone_work_share": 0.14550062997287275,
+          "exact_max_zone_work_share": 0.1469913176981542,
+          "absolute_error": 0.0014906877252814643
+        },
+        {
+          "placement": "hash_seed_2",
+          "window_index": 119,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 533,
+          "exact_physical_tasks": 533,
+          "predicted_max_zone_work_share": 0.1386020523163128,
+          "exact_max_zone_work_share": 0.1362350940205323,
+          "absolute_error": 0.0023669582957805135
+        },
+        {
+          "placement": "hash_seed_2",
+          "window_index": 159,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 253,
+          "exact_physical_tasks": 253,
+          "predicted_max_zone_work_share": 0.1405083431886578,
+          "exact_max_zone_work_share": 0.14455098054619264,
+          "absolute_error": 0.004042637357534851
+        },
+        {
+          "placement": "hash_seed_2",
+          "window_index": 199,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 770,
+          "exact_physical_tasks": 770,
+          "predicted_max_zone_work_share": 0.13862654993550086,
+          "exact_max_zone_work_share": 0.13853480577240626,
+          "absolute_error": 9.17441630945981e-05
+        },
+        {
+          "placement": "hash_seed_2",
+          "window_index": 238,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 652,
+          "exact_physical_tasks": 652,
+          "predicted_max_zone_work_share": 0.16535554205268355,
+          "exact_max_zone_work_share": 0.16348381175934806,
+          "absolute_error": 0.001871730293335483
+        },
+        {
+          "placement": "hash_seed_2",
+          "window_index": 278,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 416,
+          "exact_physical_tasks": 416,
+          "predicted_max_zone_work_share": 0.15754537312843123,
+          "exact_max_zone_work_share": 0.1582333281631071,
+          "absolute_error": 0.0006879550346758634
+        },
+        {
+          "placement": "hash_seed_3",
+          "window_index": 0,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 518,
+          "exact_physical_tasks": 518,
+          "predicted_max_zone_work_share": 0.13474520438055526,
+          "exact_max_zone_work_share": 0.13436440466343533,
+          "absolute_error": 0.000380799717119934
+        },
+        {
+          "placement": "hash_seed_3",
+          "window_index": 40,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 712,
+          "exact_physical_tasks": 712,
+          "predicted_max_zone_work_share": 0.13964918292563575,
+          "exact_max_zone_work_share": 0.1404999629655661,
+          "absolute_error": 0.00085078003993036
+        },
+        {
+          "placement": "hash_seed_3",
+          "window_index": 79,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 637,
+          "exact_physical_tasks": 637,
+          "predicted_max_zone_work_share": 0.1407989717804038,
+          "exact_max_zone_work_share": 0.14047941419553966,
+          "absolute_error": 0.00031955758486412744
+        },
+        {
+          "placement": "hash_seed_3",
+          "window_index": 119,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 537,
+          "exact_physical_tasks": 537,
+          "predicted_max_zone_work_share": 0.14187009158391795,
+          "exact_max_zone_work_share": 0.14386120504910035,
+          "absolute_error": 0.001991113465182409
+        },
+        {
+          "placement": "hash_seed_3",
+          "window_index": 159,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 250,
+          "exact_physical_tasks": 250,
+          "predicted_max_zone_work_share": 0.1423624757526066,
+          "exact_max_zone_work_share": 0.14113698239658612,
+          "absolute_error": 0.001225493356020485
+        },
+        {
+          "placement": "hash_seed_3",
+          "window_index": 199,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 769,
+          "exact_physical_tasks": 769,
+          "predicted_max_zone_work_share": 0.13836887849729132,
+          "exact_max_zone_work_share": 0.1385479770014886,
+          "absolute_error": 0.00017909850419728368
+        },
+        {
+          "placement": "hash_seed_3",
+          "window_index": 238,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 657,
+          "exact_physical_tasks": 657,
+          "predicted_max_zone_work_share": 0.14958735410907684,
+          "exact_max_zone_work_share": 0.14863297319223495,
+          "absolute_error": 0.0009543809168418849
+        },
+        {
+          "placement": "hash_seed_3",
+          "window_index": 278,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 426,
+          "exact_physical_tasks": 426,
+          "predicted_max_zone_work_share": 0.15293900757392123,
+          "exact_max_zone_work_share": 0.15411401440168623,
+          "absolute_error": 0.0011750068277650016
+        },
+        {
+          "placement": "contiguous_lba",
+          "window_index": 0,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 275,
+          "exact_physical_tasks": 275,
+          "predicted_max_zone_work_share": 0.5707042846029159,
+          "exact_max_zone_work_share": 0.5676214837818091,
+          "absolute_error": 0.0030828008211067903
+        },
+        {
+          "placement": "contiguous_lba",
+          "window_index": 40,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 409,
+          "exact_physical_tasks": 409,
+          "predicted_max_zone_work_share": 0.2604028229249831,
+          "exact_max_zone_work_share": 0.25466592119255155,
+          "absolute_error": 0.005736901732431576
+        },
+        {
+          "placement": "contiguous_lba",
+          "window_index": 79,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 319,
+          "exact_physical_tasks": 319,
+          "predicted_max_zone_work_share": 0.28394409570032164,
+          "exact_max_zone_work_share": 0.2860052216892787,
+          "absolute_error": 0.00206112598895708
+        },
+        {
+          "placement": "contiguous_lba",
+          "window_index": 119,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 252,
+          "exact_physical_tasks": 252,
+          "predicted_max_zone_work_share": 0.49668139319244703,
+          "exact_max_zone_work_share": 0.49395757596321627,
+          "absolute_error": 0.0027238172292307627
+        },
+        {
+          "placement": "contiguous_lba",
+          "window_index": 159,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 102,
+          "exact_physical_tasks": 102,
+          "predicted_max_zone_work_share": 0.5116021750760332,
+          "exact_max_zone_work_share": 0.5100187197038962,
+          "absolute_error": 0.0015834553721369993
+        },
+        {
+          "placement": "contiguous_lba",
+          "window_index": 199,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 329,
+          "exact_physical_tasks": 329,
+          "predicted_max_zone_work_share": 0.37136647619128843,
+          "exact_max_zone_work_share": 0.3683927175681661,
+          "absolute_error": 0.0029737586231223245
+        },
+        {
+          "placement": "contiguous_lba",
+          "window_index": 238,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 216,
+          "exact_physical_tasks": 216,
+          "predicted_max_zone_work_share": 0.591469007025865,
+          "exact_max_zone_work_share": 0.5717349555608576,
+          "absolute_error": 0.019734051465007396
+        },
+        {
+          "placement": "contiguous_lba",
+          "window_index": 278,
+          "logical_requests": 5000,
+          "predicted_physical_tasks": 234,
+          "exact_physical_tasks": 234,
+          "predicted_max_zone_work_share": 0.3322096728862637,
+          "exact_max_zone_work_share": 0.32984953098833975,
+          "absolute_error": 0.0023601418979239397
+        }
+      ]
+    }
+  },
+  "validation": {
+    "passed": true,
+    "window_invariants": {
+      "passed": true,
+      "checked_window_configurations": 64,
+      "failures": []
+    },
+    "work_estimator": {
+      "passed": true,
+      "sample_count": 32,
+      "physical_task_counts_match": true,
+      "mean_absolute_share_error": 0.0021282646213626128,
+      "max_absolute_share_error": 0.019734051465007396,
+      "acceptance": "mean error <= 0.03, max error <= 0.08, exact merge cardinality"
+    }
+  }
+}

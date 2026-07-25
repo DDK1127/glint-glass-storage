@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+build/
+dist/
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/
+
+# Local caches
+.cache/
+.mplconfig/
+results/.cache/
+results/.mplconfig/
+
+# Large local research inputs
+data/*.csv
+docs/references/Laser writing in glass.pdf
+
+# Historical generated artifacts remain local; source/config snapshots are tracked.
+archive/results/
+archive/misc/
+
+# Regenerable detailed outputs. Reports, summaries, and figures stay trackable.
+results/**/window_detail.csv
+results/**/zone_detail.csv
+results/**/request_detail.csv
+results/**/epoch_detail.csv
+results/**/batch_detail.csv
+results/**/representative/

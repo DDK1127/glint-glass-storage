@@ -1,0 +1,123 @@
+{
+  "config": {
+    "output_dir": "results/static-baseline-study",
+    "seeds": [
+      20260710,
+      20260711,
+      20260712,
+      20260713,
+      20260714
+    ],
+    "hot_zone_fractions": [
+      0.125,
+      0.25,
+      0.5,
+      0.8
+    ],
+    "primary_hotspot_width": 1,
+    "hotspot_widths": [
+      1,
+      2,
+      4
+    ],
+    "width_sensitivity_hot_fraction": 0.8,
+    "active_zone_counts": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "active_task_count": 640,
+    "merge_modes": [
+      true
+    ],
+    "write_representative_details": true,
+    "geometry": {
+      "levels": 8,
+      "zone_height_racks": 2,
+      "half_panel_length_m": 16.0,
+      "slots_per_half": 400,
+      "glass_capacity_bytes": 8589934592
+    },
+    "movement": {
+      "horizontal_max_m_s": 2.0,
+      "horizontal_accel_m_s2": 2.0,
+      "horizontal_min_s": 1.0,
+      "vertical_s_per_level": 3.0
+    },
+    "timing": {
+      "storage_pick_s": 3.0,
+      "reader_load_s": 3.0,
+      "reader_unload_s": 3.0,
+      "storage_place_s": 3.0,
+      "reader_mount_s": 1.0,
+      "reader_base_s": 0.00035,
+      "reader_mib_per_s": 60.0
+    },
+    "workload": {
+      "batch_size": 10000,
+      "request_size_bytes": 67108864,
+      "hot_zone": 0
+    }
+  },
+  "run_count": 50,
+  "aggregate_count": 10,
+  "findings": {
+    "merge": {
+      "uniform_hot_fraction": 0.125,
+      "heavy_hot_fraction": 0.8,
+      "uniform_makespan_h": 5.967200373558949,
+      "heavy_makespan_h": 9.271837776600643,
+      "makespan_increase_ratio": 1.5538003077095845,
+      "throughput_change_ratio": 0.6435095804632782,
+      "uniform_capacity_efficiency": 0.9804061280055286,
+      "heavy_capacity_efficiency": 0.3294640525963874,
+      "uniform_stranded_share": 0.019593871994471344,
+      "heavy_stranded_share": 0.6705359474036126,
+      "heavy_ownership_slowdown_vs_ideal": 3.035288965772674,
+      "uniform_services": 5065.8,
+      "heavy_services": 2486.8,
+      "movement_share": 0.5114762618375637,
+      "fixed_mechanical_share": 0.33906199254662084,
+      "reader_share": 0.14946174561581307
+    },
+    "active_zone_concentration": {
+      "task_count": 640,
+      "cases": [
+        {
+          "active_zone_count": 1,
+          "service_operation_count": 640.0,
+          "productive_cycle_h": 5.719515209039679,
+          "makespan_h": 5.716054056157474,
+          "capacity_efficiency": 0.125,
+          "stranded_capacity_share": 0.875
+        },
+        {
+          "active_zone_count": 2,
+          "service_operation_count": 640.0,
+          "productive_cycle_h": 5.7169802216431735,
+          "makespan_h": 2.864428561485235,
+          "capacity_efficiency": 0.2491907228436006,
+          "stranded_capacity_share": 0.7508092771563993
+        },
+        {
+          "active_zone_count": 4,
+          "service_operation_count": 640.0,
+          "productive_cycle_h": 5.717420194081164,
+          "makespan_h": 1.445960240137231,
+          "capacity_efficiency": 0.4931454718172004,
+          "stranded_capacity_share": 0.5068545281827995
+        },
+        {
+          "active_zone_count": 8,
+          "service_operation_count": 640.0,
+          "productive_cycle_h": 5.72319080486584,
+          "makespan_h": 0.737230150022829,
+          "capacity_efficiency": 0.9656825893070385,
+          "stranded_capacity_share": 0.03431741069296142
+        }
+      ],
+      "productive_work_range_ratio": 0.0010859036288999526
+    }
+  }
+}
