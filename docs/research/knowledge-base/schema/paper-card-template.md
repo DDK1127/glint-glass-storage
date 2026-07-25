@@ -47,11 +47,11 @@ Opportunity
 
 ## Reviewer inference
 
-- 
+-
 
 ## Evidence gaps
 
-- 
+-
 
 ## Reusable patterns
 
