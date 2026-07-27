@@ -158,10 +158,13 @@ class AdaptiveZoneStudyTests(unittest.TestCase):
         self.assertEqual(first.run_rows, second.run_rows)
         self.assertTrue(first.validation["passed"])
         self.assertEqual(first.validation["checked_runs"], 6)
+        self.assertIn("first_any_layout_change", first.findings["transition"])
         for row in first.run_rows:
             self.assertEqual(row["logical_request_count"], 160)
             self.assertEqual(row["shuttle_count"], 8)
             self.assertEqual(row["reader_count"], 8)
+            self.assertIn(row["adaptive_layout_changed"], (0.0, 1.0))
+            self.assertGreater(row["static_hot_zone_work_share"], 0.0)
             self.assertEqual(
                 row["service_operation_count"],
                 next(

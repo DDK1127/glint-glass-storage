@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, replace
+from collections import Counter
 import csv
 from itertools import combinations
 import json
@@ -471,7 +472,7 @@ def run_adaptive_zone_study(
     if failures:
         raise RuntimeError("adaptive-zone validation failed: " + "; ".join(failures))
     aggregate_rows = _aggregate(run_rows)
-    findings = _findings(config, aggregate_rows)
+    findings = _findings(config, aggregate_rows, run_rows)
     validation = {
         "passed": True,
         "checked_runs": len(run_rows),
@@ -633,8 +634,16 @@ def _build_run_row(
     adaptive_summary = adaptive.summary
     static_work = [float(row["active_cycle_s"]) for row in static.zone_rows]
     adaptive_work = [float(row["active_cycle_s"]) for row in adaptive.zone_rows]
+    static_productive = float(static_summary["productive_cycle_s"])
+    static_hot_work = float(
+        static.zone_rows[config.workload.hot_zone]["active_cycle_s"]
+    )
     left_heights = tuple(region.height for region in layout if region.side == "left")
     right_heights = tuple(region.height for region in layout if region.side == "right")
+    hot_side = static_layout(config.geometry)[config.workload.hot_zone].side
+    hot_side_heights = left_heights if hot_side == "left" else right_heights
+    hot_side_cuts = _cuts(hot_side_heights)
+    equal_heights = (config.geometry.zone_height_racks,) * config.zones_per_side
     return {
         "seed": seed,
         "hot_zone_fraction_target": hot_fraction,
@@ -659,6 +668,9 @@ def _build_run_row(
         "adaptive_stranded_capacity_share": adaptive_summary["stranded_capacity_share"],
         "static_zone_work_max_mean_ratio": _max_mean_ratio(static_work),
         "adaptive_zone_work_max_mean_ratio": _max_mean_ratio(adaptive_work),
+        "static_hot_zone_work_share": (
+            static_hot_work / static_productive if static_productive > 0 else 0.0
+        ),
         "static_ideal_lower_bound_s": static_summary["ideal_balanced_cycle_lower_bound_s"],
         "adaptive_ideal_lower_bound_s": adaptive_summary["ideal_balanced_cycle_lower_bound_s"],
         "static_gap_to_ideal": static_summary["ownership_slowdown_vs_ideal"],
@@ -675,6 +687,12 @@ def _build_run_row(
             else 0.0
         ),
         "boundary_displacement_levels": adaptive_score.boundary_displacement_levels,
+        "adaptive_layout_changed": float(
+            left_heights != equal_heights or right_heights != equal_heights
+        ),
+        "hot_side_cut_1": hot_side_cuts[0],
+        "hot_side_cut_2": hot_side_cuts[1],
+        "hot_side_cut_3": hot_side_cuts[2],
         "left_zone_heights": "/".join(str(value) for value in left_heights),
         "right_zone_heights": "/".join(str(value) for value in right_heights),
         "active_reader_levels": "/".join(
@@ -717,9 +735,35 @@ def _aggregate(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
 def _findings(
     config: AdaptiveZoneStudyConfig,
     rows: list[dict[str, Any]],
+    run_rows: list[dict[str, Any]],
 ) -> dict[str, Any]:
     balanced = min(rows, key=lambda row: row["hot_zone_fraction_target"])
     maximum = max(rows, key=lambda row: row["hot_zone_fraction_target"])
+    first_any_change = next(
+        (row for row in rows if row["adaptive_layout_changed_mean"] > 0.0),
+        None,
+    )
+    first_majority_change = next(
+        (row for row in rows if row["adaptive_layout_changed_mean"] >= 0.5),
+        None,
+    )
+    first_all_change = next(
+        (row for row in rows if math.isclose(row["adaptive_layout_changed_mean"], 1.0)),
+        None,
+    )
+    improvement_crossings = {}
+    for threshold in (0.01, 0.05, 0.10):
+        crossing = next(
+            (
+                row
+                for row in rows
+                if row["throughput_improvement_mean"] >= 1.0 + threshold
+            ),
+            None,
+        )
+        improvement_crossings[f"{threshold:.2f}"] = (
+            crossing["hot_zone_fraction_target"] if crossing else None
+        )
     return {
         "balanced": {
             "request_skew": balanced["hot_zone_fraction_target"],
@@ -742,6 +786,13 @@ def _findings(
             "static_gap_to_ideal": maximum["static_gap_to_ideal_mean"],
             "adaptive_gap_to_ideal": maximum["adaptive_gap_to_ideal_mean"],
         },
+        "transition": {
+            "first_any_layout_change": _transition_point(first_any_change),
+            "first_majority_layout_change": _transition_point(first_majority_change),
+            "first_all_layout_change": _transition_point(first_all_change),
+            "throughput_improvement_crossings": improvement_crossings,
+            "modal_layouts": _modal_layouts(run_rows),
+        },
         "interpretation_guardrail": (
             "This is a batch-oracle upper bound with zero boundary reconfiguration cost, "
             "not an online adaptive-zone policy."
@@ -751,6 +802,40 @@ def _findings(
             "both policies retain eight active readers and eight shuttles."
         ),
     }
+
+
+def _transition_point(row: dict[str, Any] | None) -> dict[str, Any] | None:
+    if row is None:
+        return None
+    return {
+        "request_skew": row["hot_zone_fraction_target"],
+        "layout_change_rate": row["adaptive_layout_changed_mean"],
+        "throughput_improvement": row["throughput_improvement_mean"],
+        "boundary_displacement_levels": row["boundary_displacement_levels_mean"],
+        "static_hot_zone_work_share": row["static_hot_zone_work_share_mean"],
+    }
+
+
+def _modal_layouts(run_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    groups: dict[float, list[dict[str, Any]]] = {}
+    for row in run_rows:
+        groups.setdefault(float(row["hot_zone_fraction_target"]), []).append(row)
+    modes = []
+    for fraction, group in sorted(groups.items()):
+        counts = Counter(
+            (row["left_zone_heights"], row["right_zone_heights"]) for row in group
+        )
+        (left, right), count = counts.most_common(1)[0]
+        modes.append(
+            {
+                "request_skew": fraction,
+                "left_zone_heights": left,
+                "right_zone_heights": right,
+                "seed_count": count,
+                "run_count": len(group),
+            }
+        )
+    return modes
 
 
 def _layout_json(layout: tuple[ZoneRegion, ...]) -> list[dict[str, Any]]:
@@ -782,6 +867,10 @@ def _write_report(
 ) -> None:
     balanced = result.findings["balanced"]
     maximum = result.findings["maximum_skew"]
+    transition = result.findings["transition"]
+    first_any = transition["first_any_layout_change"]
+    first_all = transition["first_all_layout_change"]
+    crossings = transition["throughput_improvement_crossings"]
     lines = [
         "# Static Equal-size vs. Adaptive Work-balanced Zones",
         "",
@@ -813,6 +902,24 @@ def _write_report(
         f"adaptive stranded capacity is {maximum['adaptive_stranded_capacity_share'] * 100:.1f}%.",
         f"- The system-drain gap to each policy's own work-conserving lower bound changes from "
         f"{maximum['static_gap_to_ideal']:.2f}x to {maximum['adaptive_gap_to_ideal']:.2f}x.",
+        (
+            f"- The first seed changes its zone layout at {first_any['request_skew'] * 100:.1f}% "
+            f"request skew; all seeds change by {first_all['request_skew'] * 100:.1f}%, "
+            f"where the original hot zone carries "
+            f"{first_all['static_hot_zone_work_share'] * 100:.1f}% of post-merge work."
+            if first_any and first_all
+            else "- No complete static-to-adaptive layout transition was observed."
+        ),
+        f"- Mean throughput improvement first reaches 1%, 5%, and 10% at "
+        f"{_format_crossing(crossings['0.01'])}, {_format_crossing(crossings['0.05'])}, "
+        f"and {_format_crossing(crossings['0.10'])} request skew.",
+        (
+            f"- The first layout change is not yet beneficial: mean throughput at "
+            f"{first_any['request_skew'] * 100:.1f}% is "
+            f"{(first_any['throughput_improvement'] - 1.0) * 100:+.2f}% versus static."
+            if first_any
+            else "- No layout change was observed."
+        ),
         "",
         "## Interpretation",
         "",
@@ -834,6 +941,7 @@ def _write_report(
         "- `fig2_imbalance_and_stranded_capacity`: exact zone-work imbalance and idle capacity.",
         "- `fig3_gap_to_work_conserving_ideal`: system drain relative to each policy's lower bound.",
         "- `fig4_representative_layout`: equal-size and adaptive panel layouts at maximum skew.",
+        "- `fig5_dense_transition`: layout adoption, throughput gain, and hot-side boundaries.",
     ]
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
@@ -1022,6 +1130,68 @@ def _write_figures(
     )
     fig.tight_layout()
     _save(fig, figures_dir, "fig4_representative_layout")
+
+    fig, axes = plt.subplots(1, 2, figsize=(10.2, 4.0))
+    throughput_gain = [
+        (row["throughput_improvement_mean"] - 1.0) * 100 for row in rows
+    ]
+    layout_adoption = [
+        row["adaptive_layout_changed_mean"] * 100 for row in rows
+    ]
+    axes[0].plot(
+        x,
+        throughput_gain,
+        color="#2878B5",
+        marker="o",
+        markersize=3.5,
+        linewidth=1.8,
+        label="Throughput gain",
+    )
+    twin = axes[0].twinx()
+    twin.plot(
+        x,
+        layout_adoption,
+        color="#D97706",
+        marker="s",
+        markersize=3.5,
+        linewidth=1.8,
+        label="Seeds changing layout",
+    )
+    axes[0].set_xlabel("Requests assigned to original hot zone (%)")
+    axes[0].set_ylabel("Throughput gain over static (%)")
+    twin.set_ylabel("Runs with adaptive layout (%)")
+    axes[0].grid(axis="y", alpha=0.25)
+    lines = axes[0].lines + twin.lines
+    axes[0].legend(
+        lines,
+        [line.get_label() for line in lines],
+        frameon=False,
+        loc="upper left",
+    )
+
+    for index, color in zip((1, 2, 3), ("#2878B5", "#2E8B57", "#D97706")):
+        axes[1].plot(
+            x,
+            [row[f"hot_side_cut_{index}_mean"] for row in rows],
+            color=color,
+            marker="o",
+            markersize=3.5,
+            linewidth=1.8,
+            label=f"Boundary {index}",
+        )
+        axes[1].axhline(index * 2, color=color, linestyle=":", linewidth=0.9)
+    axes[1].set_xlabel("Requests assigned to original hot zone (%)")
+    axes[1].set_ylabel("Mean hot-side boundary level")
+    axes[1].set_yticks(range(1, 8))
+    axes[1].grid(axis="y", alpha=0.25)
+    axes[1].legend(frameon=False)
+    fig.suptitle("Discrete zone transitions under a continuous skew sweep")
+    fig.tight_layout()
+    _save(fig, figures_dir, "fig5_dense_transition")
+
+
+def _format_crossing(fraction: float | None) -> str:
+    return f"{fraction * 100:.1f}%" if fraction is not None else "not reached"
 
 
 def _save(fig: Any, figures_dir: Path, stem: str) -> None:
