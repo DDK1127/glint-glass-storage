@@ -1,0 +1,31 @@
+{
+  "dataset": "Azure Functions Blob Access Trace 2020",
+  "audit_date": "2026-07-28",
+  "source_file": "azurefunctions_dataset2020_azurefunctions-accesses-2020.csv.bz2",
+  "source_file_size_bytes": 900450549,
+  "source_sha256": "5f8fc581d14d55f114b3f7bdc159bc7a22294e8053ad9d871f188cf4f146454b",
+  "compressed_stream_valid": true,
+  "total_csv_rows_excluding_header": 44282912,
+  "prefix_sample": {
+    "rows": 1000000,
+    "reads": 825068,
+    "writes": 174932,
+    "read_fraction": 0.825068,
+    "adjacent_timestamp_descents": 499956,
+    "timestamp_span_hours": 335.9997191666667,
+    "unique_blobs": 224897,
+    "unique_blob_versions": 294281,
+    "unique_read_blob_versions": 131162,
+    "read_version_reuse_fraction": 0.8410288606514857,
+    "blob_bytes_p50": 305,
+    "blob_bytes_p90": 23121,
+    "blob_bytes_p99": 13673052,
+    "blob_bytes_max": 1020542254,
+    "fraction_at_most_64_kib": 0.914387
+  },
+  "caveats": [
+    "The prefix sample is a file-order audit, not a temporal workload window.",
+    "The source CSV is not sorted by Timestamp and must be externally sorted before temporal batching.",
+    "Blob-version reuse is not platter-level merge; an explicit object-to-platter packing policy is still required."
+  ]
+}

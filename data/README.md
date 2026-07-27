@@ -12,3 +12,21 @@ Trace CSV files are intentionally excluded from Git. Current local files:
 
 The active RQ1 full and smoke configs both expect
 `data/2016022211-LUN0.csv`. Unit tests do not require external trace data.
+
+## Azure Functions Blob Access Trace 2020
+
+The Microsoft Azure Functions Blob Access Trace is stored locally under:
+
+`data/raw/azure-functions-blob-2020/`
+
+The compressed trace is intentionally excluded from Git. Dataset metadata,
+download instructions, and its local checksum are kept in that directory.
+
+This trace records blob accesses rather than physical glass-platter locations.
+Experiments must therefore document both:
+
+1. how immutable blob versions are packed into platters; and
+2. how those platters are assigned to the eight static owners.
+
+All requests in a batch that map to the same platter must be merged before
+static-owner work is measured.
