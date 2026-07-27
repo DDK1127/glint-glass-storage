@@ -30,3 +30,8 @@ Experiments must therefore document both:
 
 All requests in a batch that map to the same platter must be merged before
 static-owner work is measured.
+
+The canonical read-only trace generated from this source is stored locally
+under `data/processed/azure-functions-blob-2020/`. The preprocessing stage
+only filters and sorts requests. It deliberately does not deduplicate objects,
+pack objects into platters, merge requests, or assign static owners.

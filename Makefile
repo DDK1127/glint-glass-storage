@@ -1,9 +1,12 @@
-.PHONY: test smoke-rq1 smoke-static smoke-threshold smoke-stealing smoke-adaptive smoke-ownership smoke-ownership-threshold
+.PHONY: test smoke-azure-preprocess smoke-rq1 smoke-static smoke-threshold smoke-stealing smoke-adaptive smoke-ownership smoke-ownership-threshold
 
 PYTHON ?= python3
 
 test:
 	$(PYTHON) -m unittest discover -s tests -v
+
+smoke-azure-preprocess:
+	$(PYTHON) -m glass_sim preprocess-azure-blob
 
 smoke-rq1:
 	$(PYTHON) -m glass_sim rq1

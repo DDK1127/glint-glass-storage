@@ -1,0 +1,78 @@
+{
+  "dataset": "Azure Functions Blob Access Trace 2020",
+  "method": {
+    "operation_filter": "Read == True and BlobBytes is present",
+    "missing_blob_bytes": "exclude and count; no zero-fill or statistical imputation",
+    "sort_keys": [
+      "TimestampMs",
+      "SourceRow"
+    ],
+    "deduplication": "none",
+    "request_merge": "deferred to experiment batches after platter mapping",
+    "platter_packing": "not performed",
+    "owner_assignment": "not performed"
+  },
+  "config": {
+    "input_path": "data/raw/azure-functions-blob-2020/azurefunctions_dataset2020_azurefunctions-accesses-2020.csv.bz2",
+    "output_path": "data/processed/azure-functions-blob-2020/azurefunctions-accesses-2020.reads.sorted.csv.gz",
+    "sample_output_path": "data/processed/azure-functions-blob-2020/azurefunctions-accesses-2020.reads.sorted.sample-100k.csv.gz",
+    "manifest_path": "data/processed/azure-functions-blob-2020/manifest.json",
+    "temp_dir": "data/.tmp",
+    "expected_source_sha256": "5f8fc581d14d55f114b3f7bdc159bc7a22294e8053ad9d871f188cf4f146454b",
+    "sample_read_requests": 100000,
+    "sort_buffer": "1G",
+    "max_input_rows": null
+  },
+  "source": {
+    "path": "data/raw/azure-functions-blob-2020/azurefunctions_dataset2020_azurefunctions-accesses-2020.csv.bz2",
+    "size_bytes": 900450549,
+    "sha256": "5f8fc581d14d55f114b3f7bdc159bc7a22294e8053ad9d871f188cf4f146454b"
+  },
+  "source_stats": {
+    "input_rows": 44282912,
+    "read_rows": 34238962,
+    "eligible_read_rows": 34238959,
+    "non_read_rows": 10043950,
+    "write_rows": 10043950,
+    "read_and_write_rows": 0,
+    "neither_read_nor_write_rows": 0,
+    "read_rows_missing_blob_name": 0,
+    "read_rows_missing_etag": 0,
+    "read_rows_missing_blob_bytes": 3,
+    "excluded_read_rows_missing_blob_bytes": 3,
+    "read_rows_zero_bytes": 24566,
+    "read_bytes": 2342560474920,
+    "max_read_blob_bytes": 1910124864,
+    "source_order_timestamp_descents": 22133116,
+    "min_read_timestamp_ms": 1606089600031,
+    "max_read_timestamp_ms": 1607299199901
+  },
+  "output": {
+    "path": "data/processed/azure-functions-blob-2020/azurefunctions-accesses-2020.reads.sorted.csv.gz",
+    "size_bytes": 924806711,
+    "sha256": "0ce0d32018e35a34a4a8d0c3f72dcf5ef46a3b09fabd85d09b1e3413aac81734",
+    "output_rows": 34238959,
+    "first_timestamp_ms": 1606089600031,
+    "last_timestamp_ms": 1607299199901,
+    "trace_span_ms": 1209599870,
+    "timestamp_descents": 0,
+    "unstable_timestamp_ties": 0,
+    "sample_is_prefix_of_output": true
+  },
+  "sample": {
+    "path": "data/processed/azure-functions-blob-2020/azurefunctions-accesses-2020.reads.sorted.sample-100k.csv.gz",
+    "size_bytes": 3997538,
+    "sha256": "e4b785c458d5985b78baa7cdbc397541daaaef6edba2891d94835fec4d74f389",
+    "rows": 100000
+  },
+  "validation": {
+    "source_checksum_matches": true,
+    "all_source_rows_classified": true,
+    "all_read_rows_classified": true,
+    "eligible_read_count_preserved": true,
+    "output_is_timestamp_sorted": true,
+    "stable_tie_order": true,
+    "sample_is_prefix_of_canonical_output": true,
+    "passed": true
+  }
+}

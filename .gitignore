@@ -23,6 +23,9 @@ data/*.csv
 data/raw/**/*.csv
 data/raw/**/*.csv.*
 data/raw/**/*.bz2
+data/processed/**/*.csv
+data/processed/**/*.csv.*
+data/.tmp/
 docs/references/Laser writing in glass.pdf
 
 # Historical generated artifacts remain local; source/config snapshots are tracked.

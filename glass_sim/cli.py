@@ -25,6 +25,10 @@ from .natural_trace_skew import (
     run_natural_trace_skew_study,
     write_natural_trace_skew_outputs,
 )
+from .azure_blob_preprocess import (
+    load_azure_blob_preprocess_config,
+    preprocess_azure_blob_trace,
+)
 from .adaptive_zone_study import (
     load_adaptive_zone_study_config,
     run_adaptive_zone_study,
@@ -63,6 +67,12 @@ def main() -> None:
         description="Run current Glass static-zone research experiments.",
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
+    _add_command(
+        subparsers,
+        "preprocess-azure-blob",
+        "Create a stable, read-only canonical Azure Blob trace.",
+        "azure-blob-preprocessing",
+    )
     _add_command(
         subparsers,
         "rq1",
@@ -107,7 +117,9 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    if args.command == "rq1":
+    if args.command == "preprocess-azure-blob":
+        _run_azure_blob_preprocess(args.config)
+    elif args.command == "rq1":
         _run_rq1(args.config)
     elif args.command == "static-baseline":
         _run_static_baseline(args.config)
@@ -121,6 +133,19 @@ def main() -> None:
         _run_static_ownership_motivation(args.config)
     else:
         _run_static_ownership_threshold(args.config)
+
+
+def _run_azure_blob_preprocess(config_path: str) -> None:
+    config = load_azure_blob_preprocess_config(config_path)
+    manifest = preprocess_azure_blob_trace(config)
+    _print(
+        {
+            "output_path": str(config.output_path),
+            "input_rows": manifest["source_stats"]["input_rows"],
+            "read_rows": manifest["source_stats"]["read_rows"],
+            "validation_passed": manifest["validation"]["passed"],
+        }
+    )
 
 
 def _add_command(

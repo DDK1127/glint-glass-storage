@@ -5,6 +5,7 @@ Each study has a quick `smoke.json` configuration and a retained-result
 
 | Directory | Purpose | Runner |
 | --- | --- | --- |
+| `azure-blob-preprocessing/` | Stable read-only canonicalization of the Azure Functions Blob trace | `scripts/preprocess_azure_blob_trace.py` |
 | `rq1-natural-skew/` | Natural-order post-merge skew and placement sensitivity | `scripts/run_natural_trace_skew.py` |
 | `static-baseline/` | Strict fixed-zone ownership characterization | `scripts/run_static_baseline_study.py` |
 | `rq2-skew-threshold/` | Request-merge throughput curve under increasing single-zone skew | `scripts/run_skew_threshold_study.py` |
