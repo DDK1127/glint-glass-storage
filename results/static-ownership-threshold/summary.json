@@ -1,0 +1,154 @@
+{
+  "config": {
+    "output_dir": "results/static-ownership-threshold",
+    "seeds": [
+      20260720,
+      20260721,
+      20260722,
+      20260723,
+      20260724,
+      20260725,
+      20260726,
+      20260727,
+      20260728,
+      20260729
+    ],
+    "geometry": {
+      "levels": 8,
+      "zone_height_racks": 2,
+      "half_panel_length_m": 16.0,
+      "slots_per_half": 400,
+      "glass_capacity_bytes": 8589934592
+    },
+    "movement": {
+      "horizontal_max_m_s": 2.0,
+      "horizontal_accel_m_s2": 2.0,
+      "horizontal_min_s": 1.0,
+      "vertical_s_per_level": 3.0
+    },
+    "timing": {
+      "storage_pick_s": 3.0,
+      "reader_load_s": 3.0,
+      "reader_unload_s": 3.0,
+      "storage_place_s": 3.0,
+      "reader_mount_s": 1.0,
+      "reader_base_s": 0.00035,
+      "reader_mib_per_s": 60.0
+    },
+    "workload": {
+      "task_count": 640,
+      "logical_request_count": 100000,
+      "request_size_bytes": 67108864,
+      "hot_owner": 0,
+      "hot_owner_task_counts": [
+        80,
+        88,
+        96,
+        104,
+        112,
+        120,
+        128,
+        136,
+        144,
+        152,
+        160,
+        192,
+        224,
+        256,
+        288,
+        320
+      ]
+    },
+    "experiment_scope": {
+      "static_non_overlapping_ownership": true,
+      "batch_wide_merge": true,
+      "adaptive_zones": false,
+      "work_stealing": false,
+      "zipf": false,
+      "real_trace": false
+    }
+  },
+  "run_count": 160,
+  "aggregate_count": 16,
+  "validation": {
+    "passed": true,
+    "checked_runs": 160,
+    "paired_seeds": 10,
+    "exact_logical_requests": 100000,
+    "exact_post_merge_tasks": 640,
+    "paired_reader_relative_coordinates": true,
+    "paired_merge_multiplicities": true,
+    "fixed_shuttles": 8,
+    "fixed_active_readers": 8,
+    "monotonic_throughput_loss": true,
+    "failures": []
+  },
+  "findings": {
+    "crossings": {
+      "10_percent_loss": {
+        "hot_owner_task_count": 96,
+        "hot_owner_task_share": 0.15,
+        "normalized_throughput": 0.8366011026572671,
+        "throughput_loss": 0.1633988973427329,
+        "capacity_efficiency": 0.8328295855801787,
+        "stranded_capacity_share": 0.1671704144198213
+      },
+      "20_percent_loss": {
+        "hot_owner_task_count": 104,
+        "hot_owner_task_share": 0.1625,
+        "normalized_throughput": 0.7722631376802089,
+        "throughput_loss": 0.22773686231979107,
+        "capacity_efficiency": 0.7687258505537873,
+        "stranded_capacity_share": 0.23127414944621275
+      },
+      "30_percent_loss": {
+        "hot_owner_task_count": 120,
+        "hot_owner_task_share": 0.1875,
+        "normalized_throughput": 0.6689983531210183,
+        "throughput_loss": 0.3310016468789817,
+        "capacity_efficiency": 0.6660912033794929,
+        "stranded_capacity_share": 0.33390879662050715
+      },
+      "50_percent_loss": {
+        "hot_owner_task_count": 192,
+        "hot_owner_task_share": 0.3,
+        "normalized_throughput": 0.4184413595174352,
+        "throughput_loss": 0.5815586404825648,
+        "capacity_efficiency": 0.41648758122114055,
+        "stranded_capacity_share": 0.5835124187788594
+      }
+    },
+    "skew_impact_knee": {
+      "hot_owner_task_share": 0.25,
+      "normalized_throughput": 0.5019446638318922,
+      "throughput_loss": 0.49805533616810777,
+      "capacity_efficiency": 0.49968627117107267,
+      "stranded_capacity_share": 0.5003137288289273,
+      "hot_owner_task_count": 160,
+      "selection_score": 0.3316919510418341,
+      "selection_method": "Maximum normalized throughput-loss gain over normalized owner-share increase across the tested sweep."
+    },
+    "balanced": {
+      "hot_owner_task_share": 0.125,
+      "normalized_throughput": 1.0,
+      "throughput_loss": 0.0,
+      "capacity_efficiency": 0.9954300765260657,
+      "stranded_capacity_share": 0.004569923473934234
+    },
+    "moderate_25_percent": {
+      "hot_owner_task_share": 0.25,
+      "normalized_throughput": 0.5019446638318922,
+      "throughput_loss": 0.49805533616810777,
+      "capacity_efficiency": 0.49968627117107267,
+      "stranded_capacity_share": 0.5003137288289273
+    },
+    "strong_50_percent": {
+      "hot_owner_task_share": 0.5,
+      "normalized_throughput": 0.25107308267825973,
+      "throughput_loss": 0.7489269173217402,
+      "capacity_efficiency": 0.24995206879892398,
+      "stranded_capacity_share": 0.750047931201076
+    },
+    "interpretation": "No natural discontinuity is assumed. Crossings are observed engineering thresholds relative to the paired balanced case."
+  }
+}

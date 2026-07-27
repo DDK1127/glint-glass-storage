@@ -10,6 +10,9 @@ superseded model iterations should be regenerated rather than accumulated.
 | `rq2-skew-threshold/` | Dense request-skew sweep with merge, throughput crossings, and ownership cost |
 | `static-zone-work-stealing-study/` | 8-zone hotspot and one-helper distance motivation study |
 | `adaptive-zone-upper-bound/` | Equal-size static zones versus physically contiguous batch-oracle adaptive zones |
+| `adaptive-zone-dense-sweep/` | Forty-point skew sweep resolving discrete adaptive-boundary transitions |
+| `static-ownership-motivation/` | Equal-area static ownership causal mechanism with paired unique and merged workloads |
+| `static-ownership-threshold/` | Owner-concentration sweep and observed throughput-loss crossings |
 
 Superseded Zipf, artificial temporal-skew, and batch-skew outputs moved to
 `archive/results/`. Matching active configurations live in `experiments/`;

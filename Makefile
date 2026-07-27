@@ -1,4 +1,4 @@
-.PHONY: test smoke-rq1 smoke-static smoke-threshold smoke-stealing smoke-adaptive
+.PHONY: test smoke-rq1 smoke-static smoke-threshold smoke-stealing smoke-adaptive smoke-ownership smoke-ownership-threshold
 
 PYTHON ?= python3
 
@@ -19,3 +19,9 @@ smoke-stealing:
 
 smoke-adaptive:
 	$(PYTHON) -m glass_sim adaptive-zone-upper-bound
+
+smoke-ownership:
+	$(PYTHON) -m glass_sim static-ownership-motivation
+
+smoke-ownership-threshold:
+	$(PYTHON) -m glass_sim static-ownership-threshold

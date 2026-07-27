@@ -1,0 +1,49 @@
+{
+  "output_dir": "results/static-ownership-motivation",
+  "seeds": [
+    20260720,
+    20260721,
+    20260722,
+    20260723,
+    20260724,
+    20260725,
+    20260726,
+    20260727,
+    20260728,
+    20260729
+  ],
+  "geometry": {
+    "levels": 8,
+    "zone_height_racks": 2,
+    "half_panel_length_m": 16.0,
+    "slots_per_half": 400,
+    "glass_capacity_bytes": 8589934592
+  },
+  "movement": {
+    "horizontal_max_m_s": 2.0,
+    "horizontal_accel_m_s2": 2.0,
+    "horizontal_min_s": 1.0,
+    "vertical_s_per_level": 3.0
+  },
+  "timing": {
+    "storage_pick_s": 3.0,
+    "reader_load_s": 3.0,
+    "reader_unload_s": 3.0,
+    "storage_place_s": 3.0,
+    "reader_mount_s": 1.0,
+    "reader_base_s": 0.00035,
+    "reader_mib_per_s": 60.0
+  },
+  "workload": {
+    "task_count": 640,
+    "logical_request_count": 10000,
+    "request_size_bytes": 67108864,
+    "owner_distributions": {
+      "balanced": [80, 80, 80, 80, 80, 80, 80, 80],
+      "moderate": [160, 69, 69, 69, 69, 68, 68, 68],
+      "strong": [320, 46, 46, 46, 46, 46, 45, 45]
+    },
+    "baseline_scenario": "balanced",
+    "timeline_scenario": "moderate"
+  }
+}

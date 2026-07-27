@@ -1,0 +1,213 @@
+{
+  "config": {
+    "output_dir": "results/static-ownership-motivation",
+    "seeds": [
+      20260720,
+      20260721,
+      20260722,
+      20260723,
+      20260724,
+      20260725,
+      20260726,
+      20260727,
+      20260728,
+      20260729
+    ],
+    "geometry": {
+      "levels": 8,
+      "zone_height_racks": 2,
+      "half_panel_length_m": 16.0,
+      "slots_per_half": 400,
+      "glass_capacity_bytes": 8589934592
+    },
+    "movement": {
+      "horizontal_max_m_s": 2.0,
+      "horizontal_accel_m_s2": 2.0,
+      "horizontal_min_s": 1.0,
+      "vertical_s_per_level": 3.0
+    },
+    "timing": {
+      "storage_pick_s": 3.0,
+      "reader_load_s": 3.0,
+      "reader_unload_s": 3.0,
+      "storage_place_s": 3.0,
+      "reader_mount_s": 1.0,
+      "reader_base_s": 0.00035,
+      "reader_mib_per_s": 60.0
+    },
+    "workload": {
+      "task_count": 640,
+      "logical_request_count": 10000,
+      "request_size_bytes": 67108864,
+      "owner_distributions": {
+        "balanced": [
+          80,
+          80,
+          80,
+          80,
+          80,
+          80,
+          80,
+          80
+        ],
+        "moderate": [
+          160,
+          69,
+          69,
+          69,
+          69,
+          68,
+          68,
+          68
+        ],
+        "strong": [
+          320,
+          46,
+          46,
+          46,
+          46,
+          46,
+          45,
+          45
+        ]
+      },
+      "baseline_scenario": "balanced",
+      "timeline_scenario": "moderate"
+    },
+    "experiment_scope": {
+      "static_non_overlapping_ownership": true,
+      "adaptive_zones": false,
+      "work_stealing": false,
+      "zipf": false,
+      "real_trace": false
+    }
+  },
+  "run_count": 60,
+  "aggregate_count": 6,
+  "validation": {
+    "passed": true,
+    "checked_runs": 60,
+    "paired_seeds": 10,
+    "paired_reader_relative_coordinates": true,
+    "paired_intrinsic_service_costs": true,
+    "paired_request_multiplicities": true,
+    "exact_owner_counts": true,
+    "unique_non_overlapping_platters": true,
+    "logical_requests_preserved": 10000,
+    "merged_physical_tasks": 640,
+    "fixed_shuttles": 8,
+    "fixed_active_readers": 8,
+    "monotonic_completion_and_stranding": true,
+    "failures": []
+  },
+  "findings": {
+    "scenarios": {
+      "balanced": {
+        "owner_counts": "80/80/80/80/80/80/80/80",
+        "target_busiest_owner_amplification": 1.0,
+        "unique_tasks": {
+          "system_drain_over_balanced": 1.0,
+          "ownership_slowdown_vs_ideal": 1.0281155659181003,
+          "capacity_efficiency": 0.9727812516705218,
+          "stranded_capacity_share": 0.027218748329478185
+        },
+        "logical_requests_merged": {
+          "system_drain_over_balanced": 1.0,
+          "ownership_slowdown_vs_ideal": 1.0189100109750522,
+          "capacity_efficiency": 0.9815007938046048,
+          "stranded_capacity_share": 0.018499206195395287
+        }
+      },
+      "moderate": {
+        "owner_counts": "160/69/69/69/69/68/68/68",
+        "target_busiest_owner_amplification": 2.0,
+        "unique_tasks": {
+          "system_drain_over_balanced": 1.9538321805815215,
+          "ownership_slowdown_vs_ideal": 2.0076859888576073,
+          "capacity_efficiency": 0.49819635908220156,
+          "stranded_capacity_share": 0.5018036409177985
+        },
+        "logical_requests_merged": {
+          "system_drain_over_balanced": 1.968718661955927,
+          "ownership_slowdown_vs_ideal": 2.00525721873552,
+          "capacity_efficiency": 0.4987379142407891,
+          "stranded_capacity_share": 0.5012620857592108
+        }
+      },
+      "strong": {
+        "owner_counts": "320/46/46/46/46/46/45/45",
+        "target_busiest_owner_amplification": 4.0,
+        "unique_tasks": {
+          "system_drain_over_balanced": 3.898734498980533,
+          "ownership_slowdown_vs_ideal": 4.005178071687516,
+          "capacity_efficiency": 0.24969483383386087,
+          "stranded_capacity_share": 0.7503051661661391
+        },
+        "logical_requests_merged": {
+          "system_drain_over_balanced": 3.9304722832078784,
+          "ownership_slowdown_vs_ideal": 4.002778963672746,
+          "capacity_efficiency": 0.24983398007980878,
+          "stranded_capacity_share": 0.7501660199201912
+        }
+      }
+    },
+    "causal_claim": "Equal-area static ownership does not guarantee equal post-merge work; the busiest owner determines batch completion while other shuttle-time is stranded.",
+    "evidence_boundary": "This controlled mechanism experiment does not estimate how often these owner distributions occur in production Silica deployments."
+  },
+  "representative": {
+    "seed": 20260720,
+    "scenario": "moderate",
+    "mode": "unique_tasks",
+    "system_drain_s": 5226.257225448298,
+    "partition_rows": [
+      {
+        "partition_id": 0,
+        "task_count": 160,
+        "active_work_s": 5226.257225448298,
+        "completion_s": 5226.257225448298
+      },
+      {
+        "partition_id": 1,
+        "task_count": 69,
+        "active_work_s": 2246.4690898591607,
+        "completion_s": 2246.4690898591607
+      },
+      {
+        "partition_id": 2,
+        "task_count": 69,
+        "active_work_s": 2189.1015913949605,
+        "completion_s": 2189.1015913949605
+      },
+      {
+        "partition_id": 3,
+        "task_count": 69,
+        "active_work_s": 2190.801312449104,
+        "completion_s": 2190.801312449104
+      },
+      {
+        "partition_id": 4,
+        "task_count": 69,
+        "active_work_s": 2286.540368594482,
+        "completion_s": 2286.540368594482
+      },
+      {
+        "partition_id": 5,
+        "task_count": 68,
+        "active_work_s": 2187.1996539009197,
+        "completion_s": 2187.1996539009197
+      },
+      {
+        "partition_id": 6,
+        "task_count": 68,
+        "active_work_s": 2245.7449739832578,
+        "completion_s": 2245.7449739832578
+      },
+      {
+        "partition_id": 7,
+        "task_count": 68,
+        "active_work_s": 2126.3201852300344,
+        "completion_s": 2126.3201852300344
+      }
+    ]
+  }
+}

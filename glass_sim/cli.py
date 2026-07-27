@@ -35,6 +35,16 @@ from .static_baseline_study import (
     run_static_baseline_study,
     write_static_baseline_study_outputs,
 )
+from .static_ownership_motivation import (
+    load_static_ownership_motivation_config,
+    run_static_ownership_motivation,
+    write_static_ownership_motivation_outputs,
+)
+from .static_ownership_threshold import (
+    load_static_ownership_threshold_config,
+    run_static_ownership_threshold,
+    write_static_ownership_threshold_outputs,
+)
 from .skew_threshold_study import (
     load_skew_threshold_config,
     run_skew_threshold_study,
@@ -83,6 +93,18 @@ def main() -> None:
         "Compare equal-size static zones with batch-oracle adaptive boundaries.",
         "adaptive-zone-upper-bound",
     )
+    _add_command(
+        subparsers,
+        "static-ownership-motivation",
+        "Isolate imbalance caused by non-overlapping static ownership.",
+        "static-ownership-motivation",
+    )
+    _add_command(
+        subparsers,
+        "static-ownership-threshold",
+        "Measure when owner concentration degrades static throughput.",
+        "static-ownership-threshold",
+    )
     args = parser.parse_args()
 
     if args.command == "rq1":
@@ -93,8 +115,12 @@ def main() -> None:
         _run_skew_threshold(args.config)
     elif args.command == "work-stealing":
         _run_work_stealing(args.config)
-    else:
+    elif args.command == "adaptive-zone-upper-bound":
         _run_adaptive_zone(args.config)
+    elif args.command == "static-ownership-motivation":
+        _run_static_ownership_motivation(args.config)
+    else:
+        _run_static_ownership_threshold(args.config)
 
 
 def _add_command(
@@ -170,6 +196,34 @@ def _run_adaptive_zone(config_path: str) -> None:
     config = load_adaptive_zone_study_config(config_path)
     study = run_adaptive_zone_study(config)
     write_adaptive_zone_outputs(config, study)
+    _print(
+        {
+            "output_dir": str(config.output_dir),
+            "runs": len(study.run_rows),
+            "aggregate_rows": len(study.aggregate_rows),
+            "validation_passed": study.validation["passed"],
+        }
+    )
+
+
+def _run_static_ownership_motivation(config_path: str) -> None:
+    config = load_static_ownership_motivation_config(config_path)
+    study = run_static_ownership_motivation(config)
+    write_static_ownership_motivation_outputs(config, study)
+    _print(
+        {
+            "output_dir": str(config.output_dir),
+            "runs": len(study.run_rows),
+            "aggregate_rows": len(study.aggregate_rows),
+            "validation_passed": study.validation["passed"],
+        }
+    )
+
+
+def _run_static_ownership_threshold(config_path: str) -> None:
+    config = load_static_ownership_threshold_config(config_path)
+    study = run_static_ownership_threshold(config)
+    write_static_ownership_threshold_outputs(config, study)
     _print(
         {
             "output_dir": str(config.output_dir),
