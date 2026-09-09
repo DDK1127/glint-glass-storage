@@ -13,6 +13,11 @@ superseded model iterations should be regenerated rather than accumulated.
 | `adaptive-zone-dense-sweep/` | Forty-point skew sweep resolving discrete adaptive-boundary transitions |
 | `static-ownership-motivation/` | Equal-area static ownership causal mechanism with paired unique and merged workloads |
 | `static-ownership-threshold/` | Owner-concentration sweep and observed throughput-loss crossings |
+| `natural-trace-static-ownership/` | LUN0 owner-level work and throughput under fixed placement |
+| `lun-address-static-zone/` | Contiguous LUN-address mapping into eight fixed zones |
+| `azure-static-zone-pilot/` | Azure head-100k static-zone placement sensitivity |
+| `capacity-scalability/` | Fixed-resource capacity growth and per-platter time decomposition |
+| `azure-capacity-scalability/` | Capacity growth using Azure request identity, reuse, and object sizes |
 
 Superseded Zipf, artificial temporal-skew, and batch-skew outputs moved to
 `archive/results/`. Matching active configurations live in `experiments/`;

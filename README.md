@@ -1,24 +1,24 @@
 # GLINT Glass Storage
 
-GLINT (Geometry- and Load-aware Inter-zone Navigation and Task Scheduling) is
-trace-driven research code for studying static service zones, workload
-imbalance, and locality-aware work stealing in a Project Silica-style glass
-storage library.
+GLINT is trace-driven research code for studying capacity scalability, shuttle
+movement, and static ownership in a Project Silica-style glass storage
+library.
 
 ## Current Research Status
 
-The active repository contains five connected studies:
+The current research is organized around two primary studies and supporting
+static-ownership evidence:
 
-| Study | Question | Current result |
+| Study | Question | Current status |
 | --- | --- | --- |
-| RQ1 natural skew | Does natural post-merge demand remain spatially skewed? | Randomized placement shows short bursts; sustained skew is placement-dependent. |
-| Static baseline | What does fixed ownership cost under a hotspot? | Hot zones queue while other shuttle-reader resources become idle. |
-| RQ2 skew threshold | How much merged request skew materially reduces static-zone throughput? | A dense request-skew sweep measures the curve and operational loss crossings. |
-| Work stealing | Does any idle helper provide the same benefit? | Nearby helpers recover more completion time per unit of added travel. |
-| Adaptive-zone upper bound | How much can physically valid workload-balanced boundaries recover? | Paired static/adaptive runs isolate the cost of equal-area ownership. |
+| Capacity scalability | What happens when passive capacity grows while readers and shuttles remain fixed? | Controlled sweeps isolate movement amplification and reader-time dilution. |
+| Azure capacity scalability | Does the mechanism remain under trace-derived object sizes and reuse? | A paired head-100k Azure batch confirms the same capacity trend under controlled platter packing. |
+| Static ownership | When do non-overlapping owners strand otherwise available resources? | Motivation and threshold studies quantify owner-level imbalance after request merge. |
+| Trace placement checks | How sensitive are observed zones to address and object placement? | LUN-address and Azure pilots document the mapping assumptions separately from source traces. |
 
-The current story and evidence boundaries are documented in
-[`docs/research/static-zone-hotspot-work-stealing.md`](docs/research/static-zone-hotspot-work-stealing.md).
+Earlier adaptive-zone, work-stealing, and skew studies remain available as
+supporting evidence. Superseded implementations live under `archive/` and are
+not part of the active import path.
 
 ## Repository Layout
 
@@ -55,6 +55,8 @@ glint-sim static-baseline
 glint-sim skew-threshold
 glint-sim work-stealing
 glint-sim adaptive-zone-upper-bound
+glint-sim capacity-scalability
+glint-sim azure-capacity-scalability
 ```
 
 Run a full experiment by selecting its full config:
@@ -80,6 +82,9 @@ limit. See [`data/README.md`](data/README.md) for the required filenames.
 
 Detailed CSV outputs are regenerable and ignored. Research reports, summary
 JSON files, and figures under `results/` are kept as the reviewable evidence.
+
+The latest advisor-discussion deck is
+[`results/capacity-scalability/glint_capacity_zoning_discussion.pptx`](results/capacity-scalability/glint_capacity_zoning_discussion.pptx).
 
 ## Archive Policy
 

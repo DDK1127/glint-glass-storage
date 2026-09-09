@@ -10,13 +10,17 @@ dist/
 .DS_Store
 .idea/
 .vscode/
+~$*.pptx
 
 # Local caches
 .cache/
 .mplconfig/
+.playwright-cli/
+output/
 results/.cache/
 results/.mplconfig/
 results/*-smoke/
+results/smoke-*/
 
 # Large local research inputs
 data/*.csv
