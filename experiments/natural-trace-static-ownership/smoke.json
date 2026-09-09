@@ -1,0 +1,13 @@
+{
+  "output_dir": "results/smoke-natural-trace-static-ownership",
+  "natural_trace_config": "experiments/rq1-natural-skew/full.json",
+  "max_read_requests": 2000,
+  "request_count_windows": [
+    100,
+    500
+  ],
+  "time_windows_s": [
+    5
+  ],
+  "include_full_trace": true
+}

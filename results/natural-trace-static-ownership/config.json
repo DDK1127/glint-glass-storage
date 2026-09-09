@@ -1,0 +1,17 @@
+{
+  "output_dir": "results/natural-trace-static-ownership",
+  "natural_trace_config": "experiments/rq1-natural-skew/full.json",
+  "max_read_requests": null,
+  "request_count_windows": [
+    5000
+  ],
+  "time_windows_s": [
+    60.0
+  ],
+  "include_full_trace": true,
+  "balanced_reference": {
+    "type": "perfect_work_balance_lower_bound",
+    "definition": "The same exact productive cycle time divided evenly across all eight owners.",
+    "physically_realizable_policy": false
+  }
+}

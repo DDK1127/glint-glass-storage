@@ -1,0 +1,216 @@
+{
+  "config": {
+    "output_dir": "results/azure-static-zone-pilot",
+    "batch_path": "data/processed/azure-functions-blob-2020/batches/batch-00000-head-100k.csv.gz",
+    "expected_batch_sha256": "e4b785c458d5985b78baa7cdbc397541daaaef6edba2891d94835fec4d74f389",
+    "seeds": [
+      20260730,
+      20260731,
+      20260732,
+      20260733,
+      20260734,
+      20260735,
+      20260736,
+      20260737,
+      20260738,
+      20260739
+    ],
+    "geometry": {
+      "levels": 8,
+      "zone_height_racks": 2,
+      "half_panel_length_m": 16.0,
+      "slots_per_half": 400,
+      "glass_capacity_bytes": 8589934592
+    },
+    "movement": {
+      "horizontal_max_m_s": 2.0,
+      "horizontal_accel_m_s2": 2.0,
+      "horizontal_min_s": 1.0,
+      "vertical_s_per_level": 3.0
+    },
+    "timing": {
+      "storage_pick_s": 3.0,
+      "reader_load_s": 3.0,
+      "reader_unload_s": 3.0,
+      "storage_place_s": 3.0,
+      "reader_mount_s": 1.0,
+      "reader_base_s": 0.00035,
+      "reader_mib_per_s": 60.0
+    },
+    "scope": {
+      "static_non_overlapping_ownership": true,
+      "batch_wide_platter_merge": true,
+      "adaptive_zones": false,
+      "work_stealing": false,
+      "zipf": false
+    }
+  },
+  "source": {
+    "batch_path": "data/processed/azure-functions-blob-2020/batches/batch-00000-head-100k.csv.gz",
+    "batch_sha256": "e4b785c458d5985b78baa7cdbc397541daaaef6edba2891d94835fec4d74f389",
+    "logical_request_count": 100000,
+    "logical_bytes": 8612874101,
+    "unique_blob_versions": 79751,
+    "unique_blob_version_bytes": 7569589037,
+    "top_application_request_share": 0.55848
+  },
+  "validation": {
+    "passed": true,
+    "failures": [],
+    "batch_checksum_matches": true,
+    "logical_trace_shared_across_placements": true,
+    "fixed_zone_count": 8,
+    "fixed_shuttle_count": 8,
+    "fixed_reader_count": 8,
+    "mapping_signatures": {
+      "20260730": {
+        "uniform_object_hash": "7cf138e48c3daa1d4839dea4ef05c9c67a026ff5cc62d9eac48a6160b39c358c",
+        "application_owner_affinity": "72453da6d203052226d115c51b43633f98e2a0e0a2ea95375eef1cd0dc32d274"
+      },
+      "20260731": {
+        "uniform_object_hash": "7473296a1a8e2451429478992caa9257bb5179639a310ff9f693f0af7b323ee6",
+        "application_owner_affinity": "d11cc067f634d678ea5127119be2947c87ecdf670d28665f6bfc553fd08db1e0"
+      },
+      "20260732": {
+        "uniform_object_hash": "8ad7b3dec9f88f8124ec375b40fa6eac4e23e0c729d3d7f6c8e7aca54f34c10f",
+        "application_owner_affinity": "157c032acd6023d51bcc4fc37c972fb83791eb3f98e8a25b0192c0ad92245a9a"
+      },
+      "20260733": {
+        "uniform_object_hash": "b202ce6c75945c7e15b6cf40668f293edfb5aa90b3ac4683457010fe5ae9ae19",
+        "application_owner_affinity": "519fc11bdd7e70df5a4466c8f4b26296ac2fbb7771aec2bde3f814ecf86c4c9b"
+      },
+      "20260734": {
+        "uniform_object_hash": "9751ae6dc3cbf376726250a1a54b4096c58e86952aff7b7952db3daab3a2a64d",
+        "application_owner_affinity": "9eff9f102df95c4dc7ee826c9f32e2c8f292b642894ee3b2ca73658cb8042bf8"
+      },
+      "20260735": {
+        "uniform_object_hash": "aafe27d021590efb7676b1e4a1b6f85b7528a4438363d31d863483b48bec258f",
+        "application_owner_affinity": "769ca313e511b46674062f7c93fec603f442aca6ebf5ff5be7ec376b8767a997"
+      },
+      "20260736": {
+        "uniform_object_hash": "794a30b916b81722e507edcc00960afdb487a4c527f9ed187dbc702ca8dbcf7a",
+        "application_owner_affinity": "2f71a512bf3ef08aeae55d4959235d6504025917e08993763328321b3582289f"
+      },
+      "20260737": {
+        "uniform_object_hash": "36a62cfc4e3f21687e042524f6900c3701425452ad219dc74164f68a4ca628ac",
+        "application_owner_affinity": "4a36b992f489119ca048b4da1a492af02916e9edf52ec5479b3bbf72529ad54b"
+      },
+      "20260738": {
+        "uniform_object_hash": "92ddd63daf8e99dc3140278bdd2c8fd794572ae06ce11c6cbb21969428ee1079",
+        "application_owner_affinity": "19ab10a77405cd4882deb94b76c227fdbee8fb208f4325738c6d2a932d7c9528"
+      },
+      "20260739": {
+        "uniform_object_hash": "d05072e8fdd3e0c637c54752e40503af7a16c2ceb7c2c4b34b8b22a752635db9",
+        "application_owner_affinity": "aa3df71c364e9d5c78a4e1ac74972c82f847775b7843c8e305a68d1b1841b838"
+      }
+    }
+  },
+  "aggregate_rows": [
+    {
+      "placement": "uniform_object_hash",
+      "placement_label": "Uniform object hash",
+      "seed_count": 10,
+      "physical_task_count_mean": 6400.0,
+      "physical_task_count_std": 0.0,
+      "physical_task_count_min": 6400.0,
+      "physical_task_count_max": 6400.0,
+      "requests_per_physical_task_mean": 15.625,
+      "requests_per_physical_task_std": 0.0,
+      "requests_per_physical_task_min": 15.625,
+      "requests_per_physical_task_max": 15.625,
+      "max_zone_logical_share_mean": 0.141213,
+      "max_zone_logical_share_std": 0.0040690393215106644,
+      "max_zone_logical_share_min": 0.13455,
+      "max_zone_logical_share_max": 0.14622,
+      "max_zone_task_share_mean": 0.125,
+      "max_zone_task_share_std": 0.0,
+      "max_zone_task_share_min": 0.125,
+      "max_zone_task_share_max": 0.125,
+      "max_zone_work_share_mean": 0.12538882385438352,
+      "max_zone_work_share_std": 0.00014650919757503754,
+      "max_zone_work_share_min": 0.1252021852918527,
+      "max_zone_work_share_max": 0.12576410962224877,
+      "busiest_zone_work_over_mean_mean": 1.0031105908350681,
+      "busiest_zone_work_over_mean_std": 0.0011720735806003003,
+      "busiest_zone_work_over_mean_min": 1.0016174823348216,
+      "busiest_zone_work_over_mean_max": 1.0061128769779901,
+      "static_capacity_efficiency_mean": 0.9969004137583417,
+      "static_capacity_efficiency_std": 0.0011629393393022577,
+      "static_capacity_efficiency_min": 0.9939242632532931,
+      "static_capacity_efficiency_max": 0.9983851296893788,
+      "static_throughput_loss_vs_same_work_ideal_mean": 0.0030995862416582586,
+      "static_throughput_loss_vs_same_work_ideal_std": 0.0011629393393022577,
+      "static_throughput_loss_vs_same_work_ideal_min": 0.0016148703106212414,
+      "static_throughput_loss_vs_same_work_ideal_max": 0.006075736746706917,
+      "ownership_slowdown_vs_ideal_mean": 1.0031105908350681,
+      "ownership_slowdown_vs_ideal_std": 0.0011720735806003003,
+      "ownership_slowdown_vs_ideal_min": 1.0016174823348216,
+      "ownership_slowdown_vs_ideal_max": 1.0061128769779901,
+      "system_drain_s_mean": 25012.205466823943,
+      "system_drain_s_std": 31.2276337858733,
+      "system_drain_s_min": 24973.666005007402,
+      "system_drain_s_max": 25061.34336217397,
+      "logical_throughput_req_per_s_mean": 3.998054308514931,
+      "logical_throughput_req_per_s_std": 0.004990201219822039,
+      "logical_throughput_req_per_s_min": 3.990209086354635,
+      "logical_throughput_req_per_s_max": 4.004217882146309,
+      "stranded_capacity_s_mean": 620.3584794856637,
+      "stranded_capacity_s_std": 233.0789281381219,
+      "stranded_capacity_s_min": 322.6579096898786,
+      "stranded_capacity_s_max": 1216.4631993834628
+    },
+    {
+      "placement": "application_owner_affinity",
+      "placement_label": "Application owner affinity",
+      "seed_count": 10,
+      "physical_task_count_mean": 4802.3,
+      "physical_task_count_std": 538.2623988353636,
+      "physical_task_count_min": 3731.0,
+      "physical_task_count_max": 5511.0,
+      "requests_per_physical_task_mean": 21.11893083683509,
+      "requests_per_physical_task_std": 2.65271930754799,
+      "requests_per_physical_task_min": 18.145527127563057,
+      "requests_per_physical_task_max": 26.80246582685607,
+      "max_zone_logical_share_mean": 0.610714,
+      "max_zone_logical_share_std": 0.03235913323931902,
+      "max_zone_logical_share_min": 0.5778,
+      "max_zone_logical_share_max": 0.68764,
+      "max_zone_task_share_mean": 0.16895144669468073,
+      "max_zone_task_share_std": 0.021221754460383917,
+      "max_zone_task_share_min": 0.14516421702050444,
+      "max_zone_task_share_max": 0.21441972661484857,
+      "max_zone_work_share_mean": 0.16928768312833237,
+      "max_zone_work_share_std": 0.021476059693188984,
+      "max_zone_work_share_min": 0.1452889284463025,
+      "max_zone_work_share_max": 0.2151542387345482,
+      "busiest_zone_work_over_mean_mean": 1.354301465026659,
+      "busiest_zone_work_over_mean_std": 0.17180847754551187,
+      "busiest_zone_work_over_mean_min": 1.16231142757042,
+      "busiest_zone_work_over_mean_max": 1.7212339098763856,
+      "static_capacity_efficiency_mean": 0.7490523333836516,
+      "static_capacity_efficiency_std": 0.08455385982121821,
+      "static_capacity_efficiency_min": 0.5809785609393538,
+      "static_capacity_efficiency_max": 0.860354614331118,
+      "static_throughput_loss_vs_same_work_ideal_mean": 0.25094766661634843,
+      "static_throughput_loss_vs_same_work_ideal_std": 0.08455385982121821,
+      "static_throughput_loss_vs_same_work_ideal_min": 0.13964538566888196,
+      "static_throughput_loss_vs_same_work_ideal_max": 0.41902143906064615,
+      "ownership_slowdown_vs_ideal_mean": 1.354301465026659,
+      "ownership_slowdown_vs_ideal_std": 0.17180847754551187,
+      "ownership_slowdown_vs_ideal_min": 1.16231142757042,
+      "ownership_slowdown_vs_ideal_max": 1.7212339098763856,
+      "system_drain_s_mean": 24961.58200721708,
+      "system_drain_s_std": 28.52307070380448,
+      "system_drain_s_min": 24915.169967676324,
+      "system_drain_s_max": 25010.32252002043,
+      "logical_throughput_req_per_s_mean": 4.006161569061542,
+      "logical_throughput_req_per_s_std": 0.004576659029614792,
+      "logical_throughput_req_per_s_min": 3.998349078463556,
+      "logical_throughput_req_per_s_max": 4.013619017238692,
+      "stranded_capacity_s_mean": 50113.27958769106,
+      "stranded_capacity_s_std": 16892.04931347683,
+      "stranded_capacity_s_min": 27874.067177929566,
+      "stranded_capacity_s_max": 83612.82943635756
+    }
+  ]
+}

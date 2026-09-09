@@ -1,0 +1,89 @@
+{
+  "config": {
+    "output_dir": "results/lun-address-static-zone",
+    "source_trace_path": "data/2016022211-LUN0.csv",
+    "batch_trace_path": "data/2016022211-LUN0-readonly-head-100k-sorted.csv",
+    "expected_source_sha256": "55119cb4bd7a734e7092660bed4a023f92e9bdb41aac47847e3f4226184aca9c",
+    "expected_batch_sha256": "26ea2b38b497179baa6c56a83c3a4d5d0a86d57b276251751f4295c4c3ff33e4",
+    "batch_request_limit": 100000,
+    "stripe_bytes": 67108864,
+    "geometry": {
+      "levels": 8,
+      "zone_height_racks": 2,
+      "half_panel_length_m": 16.0,
+      "slots_per_half": 400,
+      "glass_capacity_bytes": 8589934592
+    },
+    "movement": {
+      "horizontal_max_m_s": 2.0,
+      "horizontal_accel_m_s2": 2.0,
+      "horizontal_min_s": 1.0,
+      "vertical_s_per_level": 3.0
+    },
+    "timing": {
+      "storage_pick_s": 3.0,
+      "reader_load_s": 3.0,
+      "reader_unload_s": 3.0,
+      "storage_place_s": 3.0,
+      "reader_mount_s": 1.0,
+      "reader_base_s": 0.00035,
+      "reader_mib_per_s": 60.0
+    },
+    "scope": {
+      "fixed_contiguous_address_zones": true,
+      "batch_wide_platter_merge": true,
+      "adaptive_zones": false,
+      "work_stealing": false,
+      "synthetic_request_skew": false
+    }
+  },
+  "source": {
+    "source_trace_path": "data/2016022211-LUN0.csv",
+    "source_sha256": "55119cb4bd7a734e7092660bed4a023f92e9bdb41aac47847e3f4226184aca9c",
+    "batch_trace_path": "data/2016022211-LUN0-readonly-head-100k-sorted.csv",
+    "batch_sha256": "26ea2b38b497179baa6c56a83c3a4d5d0a86d57b276251751f4295c4c3ff33e4",
+    "source_read_count": 1399055,
+    "observed_min_offset": 135659520,
+    "observed_max_offset": 5086380044800,
+    "min_stripe_id": 2,
+    "max_stripe_id": 75792,
+    "observed_address_span_bytes": 5086247911424,
+    "address_bounds_source": "all reads in the complete LUN0 trace",
+    "batch_request_count": 100000,
+    "batch_logical_bytes": 1866879488,
+    "batch_span_s": 155.22596311569214,
+    "batch_unique_offsets": 90300,
+    "batch_unique_stripes": 5221
+  },
+  "summary": {
+    "logical_request_count": 100000,
+    "logical_bytes": 1866879488,
+    "physical_task_count": 1366,
+    "requests_per_physical_task": 73.20644216691069,
+    "zone_count": 8,
+    "shuttle_count": 8,
+    "reader_count": 8,
+    "balanced_zone_share": 0.125,
+    "max_zone_logical_share": 0.31986,
+    "logical_busiest_zone_over_mean": 2.55888,
+    "max_zone_post_merge_work_share": 0.2991049033148703,
+    "work_busiest_zone_over_mean": 2.392839226518962,
+    "static_capacity_efficiency": 0.4179135768577201,
+    "static_throughput_loss_vs_same_work_ideal": 0.5820864231422799,
+    "ownership_slowdown_vs_ideal": 2.392839226518962,
+    "system_drain_s": 12518.258221372438,
+    "ideal_balanced_cycle_lower_bound_s": 5231.5500693223175,
+    "logical_throughput_req_per_s": 7.9883317815948125,
+    "stranded_capacity_s": 58293.665216400965
+  },
+  "validation": {
+    "passed": true,
+    "failures": [],
+    "source_checksum_matches": true,
+    "batch_checksum_matches": true,
+    "logical_requests_preserved": true,
+    "logical_bytes_preserved": true,
+    "fixed_contiguous_zone_boundaries": true,
+    "same_address_has_fixed_position": true
+  }
+}

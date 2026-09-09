@@ -1,0 +1,33 @@
+{
+  "output_dir": "results/smoke-azure-capacity-scalability",
+  "batch_path": "data/processed/azure-functions-blob-2020/batches/batch-00000-head-100k.csv.gz",
+  "expected_batch_sha256": "e4b785c458d5985b78baa7cdbc397541daaaef6edba2891d94835fec4d74f389",
+  "seeds": [20260804, 20260805],
+  "storage_rack_counts": [1, 4, 8],
+  "reader_count": 8,
+  "shuttle_count": 8,
+  "virtual_platter_count": 64,
+  "geometry": {
+    "levels": 8,
+    "zone_height_racks": 2,
+    "rack_length_m": 2.0,
+    "slots_per_half_per_rack": 100,
+    "fixed_footprint_half_length_m": 2.0,
+    "glass_capacity_bytes": 7000000000000
+  },
+  "movement": {
+    "horizontal_max_m_s": 2.0,
+    "horizontal_accel_m_s2": 2.0,
+    "horizontal_min_s": 1.0,
+    "vertical_s_per_level": 3.0
+  },
+  "timing": {
+    "storage_pick_s": 3.0,
+    "reader_load_s": 3.0,
+    "reader_unload_s": 3.0,
+    "storage_place_s": 3.0,
+    "reader_mount_s": 1.0,
+    "reader_base_s": 0.00035,
+    "reader_mib_per_s": 60.0
+  }
+}

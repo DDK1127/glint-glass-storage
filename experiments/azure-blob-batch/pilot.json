@@ -1,0 +1,9 @@
+{
+  "input_path": "data/processed/azure-functions-blob-2020/azurefunctions-accesses-2020.reads.sorted.csv.gz",
+  "output_path": "data/processed/azure-functions-blob-2020/batches/batch-00000-head-100k.csv.gz",
+  "manifest_path": "data/processed/azure-functions-blob-2020/batches/batch-00000-head-100k.manifest.json",
+  "reference_lun_trace_path": "data/2016022211-LUN0-readonly-head-100k-sorted.csv",
+  "expected_source_sha256": "0ce0d32018e35a34a4a8d0c3f72dcf5ef46a3b09fabd85d09b1e3413aac81734",
+  "start_read_index": 0,
+  "request_count": 100000
+}

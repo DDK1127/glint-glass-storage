@@ -1,0 +1,31 @@
+{
+  "output_dir": "results/lun-address-static-zone",
+  "source_trace_path": "data/2016022211-LUN0.csv",
+  "batch_trace_path": "data/2016022211-LUN0-readonly-head-100k-sorted.csv",
+  "expected_source_sha256": "55119cb4bd7a734e7092660bed4a023f92e9bdb41aac47847e3f4226184aca9c",
+  "expected_batch_sha256": "26ea2b38b497179baa6c56a83c3a4d5d0a86d57b276251751f4295c4c3ff33e4",
+  "batch_request_limit": 100000,
+  "stripe_bytes": 67108864,
+  "geometry": {
+    "levels": 8,
+    "zone_height_racks": 2,
+    "half_panel_length_m": 16.0,
+    "slots_per_half": 400,
+    "glass_capacity_bytes": 8589934592
+  },
+  "movement": {
+    "horizontal_max_m_s": 2.0,
+    "horizontal_accel_m_s2": 2.0,
+    "horizontal_min_s": 1.0,
+    "vertical_s_per_level": 3.0
+  },
+  "timing": {
+    "storage_pick_s": 3.0,
+    "reader_load_s": 3.0,
+    "reader_unload_s": 3.0,
+    "storage_place_s": 3.0,
+    "reader_mount_s": 1.0,
+    "reader_base_s": 0.00035,
+    "reader_mib_per_s": 60.0
+  }
+}

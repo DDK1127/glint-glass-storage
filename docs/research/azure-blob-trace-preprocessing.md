@@ -71,3 +71,18 @@ python3 -m glass_sim preprocess-azure-blob \
 
 The full output and sample are local generated data and are excluded from Git.
 The full manifest remains trackable.
+
+## Pilot Batch
+
+The first pilot follows the existing
+`2016022211-LUN0-readonly-head-100k-sorted.csv` convention: select the first
+100,000 eligible reads after timestamp sorting. This is a deterministic
+count-based batch, not a selected peak interval.
+
+```bash
+python3 -m glass_sim extract-azure-batch
+```
+
+The Azure and LUN0 batches retain their natural time spans. They are not
+rate-normalized. The pilot batch does not yet perform object-to-platter
+packing or platter-level request merge.

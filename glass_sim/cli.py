@@ -29,10 +29,34 @@ from .azure_blob_preprocess import (
     load_azure_blob_preprocess_config,
     preprocess_azure_blob_trace,
 )
+from .azure_blob_batch import (
+    extract_azure_blob_batch,
+    load_azure_blob_batch_config,
+)
+from .azure_static_zone_pilot import (
+    load_azure_static_zone_pilot_config,
+    run_azure_static_zone_pilot,
+    write_azure_static_zone_pilot_outputs,
+)
+from .azure_capacity_scalability import (
+    load_azure_capacity_scalability_config,
+    run_azure_capacity_scalability,
+    write_azure_capacity_scalability_outputs,
+)
+from .lun_address_static_zone import (
+    load_lun_address_static_zone_config,
+    run_lun_address_static_zone,
+    write_lun_address_static_zone_outputs,
+)
 from .adaptive_zone_study import (
     load_adaptive_zone_study_config,
     run_adaptive_zone_study,
     write_adaptive_zone_outputs,
+)
+from .capacity_scalability import (
+    load_capacity_scalability_config,
+    run_capacity_scalability,
+    write_capacity_scalability_outputs,
 )
 from .static_baseline_study import (
     load_static_baseline_study_config,
@@ -72,6 +96,25 @@ def main() -> None:
         "preprocess-azure-blob",
         "Create a stable, read-only canonical Azure Blob trace.",
         "azure-blob-preprocessing",
+    )
+    _add_command(
+        subparsers,
+        "extract-azure-batch",
+        "Extract one reproducible count-based Azure read batch.",
+        "azure-blob-batch",
+        "pilot.json",
+    )
+    _add_command(
+        subparsers,
+        "azure-static-zone-pilot",
+        "Measure static ownership on the Azure head-100k batch.",
+        "azure-static-zone-pilot",
+    )
+    _add_command(
+        subparsers,
+        "lun-address-static-zone",
+        "Measure static-zone skew under fixed contiguous LUN address mapping.",
+        "lun-address-static-zone",
     )
     _add_command(
         subparsers,
@@ -115,10 +158,28 @@ def main() -> None:
         "Measure when owner concentration degrades static throughput.",
         "static-ownership-threshold",
     )
+    _add_command(
+        subparsers,
+        "capacity-scalability",
+        "Measure fixed-resource performance as glass rack capacity grows.",
+        "capacity-scalability",
+    )
+    _add_command(
+        subparsers,
+        "azure-capacity-scalability",
+        "Run capacity scaling with Azure Blob request sizes and reuse.",
+        "azure-capacity-scalability",
+    )
     args = parser.parse_args()
 
     if args.command == "preprocess-azure-blob":
         _run_azure_blob_preprocess(args.config)
+    elif args.command == "extract-azure-batch":
+        _run_azure_blob_batch(args.config)
+    elif args.command == "azure-static-zone-pilot":
+        _run_azure_static_zone_pilot(args.config)
+    elif args.command == "lun-address-static-zone":
+        _run_lun_address_static_zone(args.config)
     elif args.command == "rq1":
         _run_rq1(args.config)
     elif args.command == "static-baseline":
@@ -131,8 +192,12 @@ def main() -> None:
         _run_adaptive_zone(args.config)
     elif args.command == "static-ownership-motivation":
         _run_static_ownership_motivation(args.config)
-    else:
+    elif args.command == "static-ownership-threshold":
         _run_static_ownership_threshold(args.config)
+    elif args.command == "capacity-scalability":
+        _run_capacity_scalability(args.config)
+    else:
+        _run_azure_capacity_scalability(args.config)
 
 
 def _run_azure_blob_preprocess(config_path: str) -> None:
@@ -148,16 +213,90 @@ def _run_azure_blob_preprocess(config_path: str) -> None:
     )
 
 
+def _run_capacity_scalability(config_path: str) -> None:
+    config = load_capacity_scalability_config(config_path)
+    result = run_capacity_scalability(config)
+    write_capacity_scalability_outputs(config, result)
+    _print(
+        {
+            "output_dir": str(config.output_dir),
+            "runs": len(result.run_rows),
+            "aggregate_rows": len(result.aggregate_rows),
+            "validation_passed": result.validation["passed"],
+        }
+    )
+
+
+def _run_azure_capacity_scalability(config_path: str) -> None:
+    config = load_azure_capacity_scalability_config(config_path)
+    result = run_azure_capacity_scalability(config)
+    write_azure_capacity_scalability_outputs(config, result)
+    _print(
+        {
+            "output_dir": str(config.output_dir),
+            "runs": len(result.run_rows),
+            "aggregate_rows": len(result.aggregate_rows),
+            "validation_passed": result.validation["passed"],
+        }
+    )
+
+
+def _run_azure_blob_batch(config_path: str) -> None:
+    config = load_azure_blob_batch_config(config_path)
+    manifest = extract_azure_blob_batch(config)
+    _print(
+        {
+            "output_path": str(config.output_path),
+            "request_count": manifest["batch"]["request_count"],
+            "span_s": manifest["batch"]["span_ms"] / 1000,
+            "validation_passed": manifest["validation"]["passed"],
+        }
+    )
+
+
+def _run_azure_static_zone_pilot(config_path: str) -> None:
+    config = load_azure_static_zone_pilot_config(config_path)
+    result = run_azure_static_zone_pilot(config)
+    write_azure_static_zone_pilot_outputs(config, result)
+    _print(
+        {
+            "output_dir": str(config.output_dir),
+            "runs": len(result.run_rows),
+            "validation_passed": result.validation["passed"],
+        }
+    )
+
+
+def _run_lun_address_static_zone(config_path: str) -> None:
+    config = load_lun_address_static_zone_config(config_path)
+    result = run_lun_address_static_zone(config)
+    write_lun_address_static_zone_outputs(config, result)
+    _print(
+        {
+            "output_dir": str(config.output_dir),
+            "logical_requests": result.summary["logical_request_count"],
+            "physical_tasks": result.summary["physical_task_count"],
+            "validation_passed": result.validation["passed"],
+        }
+    )
+
+
 def _add_command(
     subparsers: argparse._SubParsersAction,
     name: str,
     help_text: str,
     experiment_dir: str,
+    default_config_name: str = "smoke.json",
 ) -> None:
     command = subparsers.add_parser(name, help=help_text)
     command.add_argument(
         "--config",
-        default=str(REPOSITORY_ROOT / "experiments" / experiment_dir / "smoke.json"),
+        default=str(
+            REPOSITORY_ROOT
+            / "experiments"
+            / experiment_dir
+            / default_config_name
+        ),
         help="Experiment JSON config. Defaults to the smoke configuration.",
     )
 

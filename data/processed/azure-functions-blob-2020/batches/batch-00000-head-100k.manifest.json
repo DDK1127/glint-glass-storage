@@ -1,0 +1,85 @@
+{
+  "dataset": "Azure Functions Blob Access Trace 2020",
+  "selection": {
+    "type": "consecutive_request_count",
+    "start_read_index_zero_based": 0,
+    "request_count": 100000,
+    "policy": "earliest timestamp-sorted eligible reads; no hotspot, region, application, or peak-rate selection"
+  },
+  "config": {
+    "input_path": "data/processed/azure-functions-blob-2020/azurefunctions-accesses-2020.reads.sorted.csv.gz",
+    "output_path": "data/processed/azure-functions-blob-2020/batches/batch-00000-head-100k.csv.gz",
+    "manifest_path": "data/processed/azure-functions-blob-2020/batches/batch-00000-head-100k.manifest.json",
+    "reference_lun_trace_path": "data/2016022211-LUN0-readonly-head-100k-sorted.csv",
+    "expected_source_sha256": "0ce0d32018e35a34a4a8d0c3f72dcf5ef46a3b09fabd85d09b1e3413aac81734",
+    "start_read_index": 0,
+    "request_count": 100000
+  },
+  "source": {
+    "path": "data/processed/azure-functions-blob-2020/azurefunctions-accesses-2020.reads.sorted.csv.gz",
+    "sha256": "0ce0d32018e35a34a4a8d0c3f72dcf5ef46a3b09fabd85d09b1e3413aac81734"
+  },
+  "batch": {
+    "path": "data/processed/azure-functions-blob-2020/batches/batch-00000-head-100k.csv.gz",
+    "size_bytes": 3997538,
+    "sha256": "e4b785c458d5985b78baa7cdbc397541daaaef6edba2891d94835fec4d74f389",
+    "request_count": 100000,
+    "first_timestamp_ms": 1606089600031,
+    "last_timestamp_ms": 1606104528127,
+    "first_timestamp_utc": "2020-11-23T00:00:00.031000+00:00",
+    "last_timestamp_utc": "2020-11-23T04:08:48.127000+00:00",
+    "first_arrival_ms": 0,
+    "span_ms": 14928096,
+    "timestamp_descents": 0,
+    "logical_bytes": 8612874101,
+    "zero_byte_reads": 143,
+    "unique_blob_names": 74664,
+    "unique_blob_versions": 79751,
+    "repeated_blob_version_requests": 20249,
+    "repeated_blob_version_fraction": 0.20248999999999995,
+    "unique_applications": 129,
+    "region_counts": {
+      "1et": 89,
+      "49e": 4151,
+      "6ex": 10078,
+      "7cr": 55848,
+      "ayi": 20862,
+      "bey": 41,
+      "cre": 2937,
+      "dk4": 1283,
+      "iic": 91,
+      "jme": 420,
+      "kjy": 1822,
+      "m7p": 1789,
+      "nd6": 3,
+      "nxi": 585,
+      "sgr": 1
+    },
+    "blob_bytes_p50": 5233,
+    "blob_bytes_p90": 10899,
+    "blob_bytes_p99": 1557988,
+    "blob_bytes_max": 294384414
+  },
+  "reference_lun0_head_100k": {
+    "path": "data/2016022211-LUN0-readonly-head-100k-sorted.csv",
+    "read_request_count": 100000,
+    "span_s": 155.22596311569214,
+    "logical_bytes": 1866879488,
+    "unique_lun_offsets": 90300,
+    "repeated_lun_offset_fraction": 0.09699999999999998
+  },
+  "comparison_notes": [
+    "Both artifacts use the first 100,000 timestamp-sorted reads.",
+    "Their natural time spans are retained and are not rate-normalized.",
+    "Azure blob-version identity and LUN offset identity are not equivalent.",
+    "No object-to-platter packing or batch-wide platter merge is applied here."
+  ],
+  "validation": {
+    "source_checksum_matches": true,
+    "requested_row_count_extracted": true,
+    "timestamps_monotonic": true,
+    "batch_arrival_rebased_to_zero": true,
+    "reference_request_count_matches": true,
+    "passed": true
+  }
+}

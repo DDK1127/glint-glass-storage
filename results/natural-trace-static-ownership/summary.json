@@ -1,0 +1,106 @@
+{
+  "config": {
+    "output_dir": "results/natural-trace-static-ownership",
+    "natural_trace_config": "experiments/rq1-natural-skew/full.json",
+    "max_read_requests": null,
+    "request_count_windows": [
+      5000
+    ],
+    "time_windows_s": [
+      60.0
+    ],
+    "include_full_trace": true,
+    "balanced_reference": {
+      "type": "perfect_work_balance_lower_bound",
+      "definition": "The same exact productive cycle time divided evenly across all eight owners.",
+      "physically_realizable_policy": false
+    }
+  },
+  "source": {
+    "read_requests": 1399055,
+    "trace_span_s": 3598.2433519363403,
+    "raw_out_of_order_adjacent_pairs": 342819,
+    "timestamp_order_normalized": true,
+    "trace_path": "data/2016022211-LUN0.csv",
+    "trace_bytes": 36156877824,
+    "request_signature_sha256": "dc81ba58348d517d3b15e31d93da00455a625d71116d101d0117bf444897192a",
+    "placement_count": 4,
+    "zone_count": 8,
+    "balanced_owner_share": 0.125,
+    "batch_replay_arrival_s": 0.0
+  },
+  "validation": {
+    "passed": true,
+    "failures": [],
+    "checked_window_configurations": 12,
+    "exact_static_zone_replay": true,
+    "request_and_byte_conservation": true,
+    "balanced_reference": "same productive cycle time divided across 8 owners"
+  },
+  "findings": {
+    "contiguous_lba": {
+      "full_trace": {
+        "placement_count": 1,
+        "window_count": 1.0,
+        "busiest_work_share_p50": 0.1811646589124543,
+        "busiest_work_share_p95": 0.1811646589124543,
+        "aggregate_throughput_retained_vs_ideal": 0.6899800477112082,
+        "aggregate_throughput_loss_vs_ideal": 0.31001995228879176,
+        "throughput_loss_p95": 0.31001995228879176,
+        "stranded_capacity_share_mean": 0.31001995228879176
+      },
+      "5000_requests": {
+        "placement_count": 1,
+        "window_count": 279.0,
+        "busiest_work_share_p50": 0.3233973233351638,
+        "busiest_work_share_p95": 0.5572553557038814,
+        "aggregate_throughput_retained_vs_ideal": 0.38055855736463107,
+        "aggregate_throughput_loss_vs_ideal": 0.6194414426353689,
+        "throughput_loss_p95": 0.775684112433716,
+        "stranded_capacity_share_mean": 0.605173502216338
+      },
+      "60_seconds": {
+        "placement_count": 1,
+        "window_count": 60.0,
+        "busiest_work_share_p50": 0.24571261924769855,
+        "busiest_work_share_p95": 0.38101355617109284,
+        "aggregate_throughput_retained_vs_ideal": 0.49604094057495807,
+        "aggregate_throughput_loss_vs_ideal": 0.5039590594250419,
+        "throughput_loss_p95": 0.671927238677422,
+        "stranded_capacity_share_mean": 0.48669946221555604
+      }
+    },
+    "randomized_hash": {
+      "full_trace": {
+        "placement_count": 3,
+        "window_count": 1.0,
+        "busiest_work_share_p50": 0.12604123334265052,
+        "busiest_work_share_p95": 0.12604123334265052,
+        "aggregate_throughput_retained_vs_ideal": 0.9917417612552876,
+        "aggregate_throughput_loss_vs_ideal": 0.008258238744712432,
+        "throughput_loss_p95": 0.008258238744712432,
+        "stranded_capacity_share_mean": 0.008258238744712414
+      },
+      "5000_requests": {
+        "placement_count": 3,
+        "window_count": 279.0,
+        "busiest_work_share_p50": 0.1480193069193331,
+        "busiest_work_share_p95": 0.17568289535127682,
+        "aggregate_throughput_retained_vs_ideal": 0.8476452517587136,
+        "aggregate_throughput_loss_vs_ideal": 0.15235474824128636,
+        "throughput_loss_p95": 0.28805868935727913,
+        "stranded_capacity_share_mean": 0.16553239175490492
+      },
+      "60_seconds": {
+        "placement_count": 3,
+        "window_count": 60.0,
+        "busiest_work_share_p50": 0.13774228058893317,
+        "busiest_work_share_p95": 0.1480931271306182,
+        "aggregate_throughput_retained_vs_ideal": 0.9104423266449985,
+        "aggregate_throughput_loss_vs_ideal": 0.08955767335500153,
+        "throughput_loss_p95": 0.1557810911386175,
+        "stranded_capacity_share_mean": 0.09427930005114836
+      }
+    }
+  }
+}

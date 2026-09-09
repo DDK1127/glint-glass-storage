@@ -1,0 +1,213 @@
+{
+  "config": {
+    "output_dir": "results/azure-capacity-scalability",
+    "batch_path": "data/processed/azure-functions-blob-2020/batches/batch-00000-head-100k.csv.gz",
+    "expected_batch_sha256": "e4b785c458d5985b78baa7cdbc397541daaaef6edba2891d94835fec4d74f389",
+    "seeds": [
+      20260804,
+      20260805,
+      20260806,
+      20260807,
+      20260808,
+      20260809,
+      20260810,
+      20260811,
+      20260812,
+      20260813
+    ],
+    "storage_rack_counts": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32
+    ],
+    "reader_count": 8,
+    "shuttle_count": 8,
+    "virtual_platter_count": 640,
+    "geometry": {
+      "levels": 8,
+      "zone_height_racks": 2,
+      "rack_length_m": 2.0,
+      "slots_per_half_per_rack": 100,
+      "fixed_footprint_half_length_m": 2.0,
+      "glass_capacity_bytes": 7000000000000
+    },
+    "movement": {
+      "horizontal_max_m_s": 2.0,
+      "horizontal_accel_m_s2": 2.0,
+      "horizontal_min_s": 1.0,
+      "vertical_s_per_level": 3.0
+    },
+    "timing": {
+      "storage_pick_s": 3.0,
+      "reader_load_s": 3.0,
+      "reader_unload_s": 3.0,
+      "storage_place_s": 3.0,
+      "reader_mount_s": 1.0,
+      "reader_base_s": 0.00035,
+      "reader_mib_per_s": 60.0
+    },
+    "experiment_scope": {
+      "azure_trace_sizes_and_reuse": true,
+      "batch_wide_platter_merge": true,
+      "fixed_logical_and_physical_work": true,
+      "paired_normalized_locations": true,
+      "all_requests_arrive_at_batch_start": true,
+      "original_interarrival_times_modeled": false,
+      "prefetch": false,
+      "request_reordering": false,
+      "controller_cpu_cost": false,
+      "shuttle_collision": false
+    }
+  },
+  "source": {
+    "dataset": "Azure Functions Blob Access Trace 2020",
+    "batch_path": "data/processed/azure-functions-blob-2020/batches/batch-00000-head-100k.csv.gz",
+    "batch_sha256": "e4b785c458d5985b78baa7cdbc397541daaaef6edba2891d94835fec4d74f389",
+    "logical_request_count": 100000,
+    "logical_bytes": 8612874101,
+    "unique_blob_versions": 79751,
+    "unique_blob_version_bytes": 7569589037,
+    "repeated_blob_version_requests": 20249,
+    "batch_trace_span_s": 14928.096
+  },
+  "run_count": 120,
+  "aggregate_count": 12,
+  "validation": {
+    "passed": true,
+    "checked_runs": 120,
+    "paired_seeds": 10,
+    "batch_checksum_matches": true,
+    "fixed_logical_requests": 100000,
+    "fixed_logical_bytes": 8612874101,
+    "fixed_unique_blob_versions": 79751,
+    "fixed_unique_blob_version_bytes": 7569589037,
+    "fixed_physical_tasks": 640,
+    "fixed_readers": 8,
+    "fixed_shuttles": 8,
+    "balanced_physical_tasks_per_service_lane": true,
+    "paired_work_signatures": {
+      "20260804": "201444b0cc5ba4dded59138dc7ff4d9ed86498f69c232cdd4c335d686f022cec",
+      "20260805": "9e204cb5c2b15f9afb59c1f6df0542389318f4fbe5525fead89857db1c6f86da",
+      "20260806": "141bdd6a0f81bfde8b8405e1236deb61340126eca239fb8c21f7cc1e9bf9433c",
+      "20260807": "eab0e7c0ffe5675168d00e780167fdf0ad98cfdf5a6c9e2edf575f658afd5230",
+      "20260808": "8ca48095fab85b99e2a540164040caa5b70b09686412afcb8f4d98ebd163cca7",
+      "20260809": "2bdc1ae3abcb1a24d59670d624d09fe938652a1fb4ef6cb84b3c9867698b1d11",
+      "20260810": "793c94c3d745c5cdd9e225b11edd2c035d6062593538b5a248601127cb9daa9b",
+      "20260811": "35bcf2c80fc03c68a90a33ce98bf45fc134ab7fadb1c860262e7ecb80e981a75",
+      "20260812": "975eaba87b0c9a3f29c1a8aaa65945f22f1229d77a60f5b120947ed1b9b94a8a",
+      "20260813": "f4a20f8b0b94fefe8cfaa0a6ac6338b9bb3f1b46c1168e8dd71eedf83203a9a4"
+    },
+    "fixed_footprint_control_is_stable": true,
+    "growing_footprint_movement_is_monotonic": true,
+    "failures": []
+  },
+  "findings": {
+    "baseline": {
+      "storage_rack_count": 1,
+      "platter_slot_count": 1600.0,
+      "half_panel_length_m": 2.0,
+      "normalized_throughput": 1.0,
+      "throughput_loss": 0.0,
+      "drive_makespan_s": 1784.35058103503,
+      "avg_shuttle_movement_s": 8.568154367870543,
+      "movement_time_share": 0.39380809997724525,
+      "reader_utilization": 0.3208256656783995,
+      "throughput_req_per_s": 56.045248861862575,
+      "throughput_mib_per_s": 4.0458631645268595,
+      "busiest_lane_work_over_mean": 1.029900209225975
+    },
+    "largest_growing_footprint": {
+      "storage_rack_count": 32,
+      "platter_slot_count": 51200.0,
+      "half_panel_length_m": 64.0,
+      "normalized_throughput": 0.344570679057672,
+      "throughput_loss": 0.655429320942328,
+      "drive_makespan_s": 5178.572744232216,
+      "avg_shuttle_movement_s": 50.44185033125699,
+      "movement_time_share": 0.792732780230883,
+      "reader_utilization": 0.11061927878186223,
+      "throughput_req_per_s": 19.31105064381756,
+      "throughput_mib_per_s": 1.3940498089446371,
+      "busiest_lane_work_over_mean": 1.0212916344897796
+    },
+    "largest_fixed_footprint_control": {
+      "storage_rack_count": 32,
+      "platter_slot_count": 51200.0,
+      "half_panel_length_m": 2.0,
+      "normalized_throughput": 0.9991799723365815,
+      "throughput_loss": 0.0008200276634185433,
+      "drive_makespan_s": 1785.8139523970783,
+      "avg_shuttle_movement_s": 8.58797297026398,
+      "movement_time_share": 0.3943598575595259,
+      "reader_utilization": 0.3205464273871111,
+      "throughput_req_per_s": 55.999255860499815,
+      "throughput_mib_per_s": 4.042542965333913,
+      "busiest_lane_work_over_mean": 1.0298589486035943
+    },
+    "crossings": {
+      "10_percent_loss": {
+        "storage_rack_count": 4,
+        "platter_slot_count": 6400.0,
+        "half_panel_length_m": 8.0,
+        "normalized_throughput": 0.8390398197143843,
+        "throughput_loss": 0.16096018028561568,
+        "drive_makespan_s": 2126.6630654680057,
+        "avg_shuttle_movement_s": 12.813988588369742,
+        "movement_time_share": 0.49279309703932095,
+        "reader_utilization": 0.2692152056091995,
+        "throughput_req_per_s": 47.02413714379862,
+        "throughput_mib_per_s": 3.394636087399316,
+        "busiest_lane_work_over_mean": 1.026926540891781
+      },
+      "20_percent_loss": {
+        "storage_rack_count": 8,
+        "platter_slot_count": 12800.0,
+        "half_panel_length_m": 16.0,
+        "normalized_throughput": 0.6963204897385135,
+        "throughput_loss": 0.30367951026148654,
+        "drive_makespan_s": 2562.567576950754,
+        "avg_shuttle_movement_s": 18.2258263426958,
+        "movement_time_share": 0.5801729180906032,
+        "reader_utilization": 0.2234458909914061,
+        "throughput_req_per_s": 39.02534258114817,
+        "throughput_mib_per_s": 2.817209294962201,
+        "busiest_lane_work_over_mean": 1.0241245053485668
+      },
+      "30_percent_loss": {
+        "storage_rack_count": 8,
+        "platter_slot_count": 12800.0,
+        "half_panel_length_m": 16.0,
+        "normalized_throughput": 0.6963204897385135,
+        "throughput_loss": 0.30367951026148654,
+        "drive_makespan_s": 2562.567576950754,
+        "avg_shuttle_movement_s": 18.2258263426958,
+        "movement_time_share": 0.5801729180906032,
+        "reader_utilization": 0.2234458909914061,
+        "throughput_req_per_s": 39.02534258114817,
+        "throughput_mib_per_s": 2.817209294962201,
+        "busiest_lane_work_over_mean": 1.0241245053485668
+      },
+      "50_percent_loss": {
+        "storage_rack_count": 32,
+        "platter_slot_count": 51200.0,
+        "half_panel_length_m": 64.0,
+        "normalized_throughput": 0.344570679057672,
+        "throughput_loss": 0.655429320942328,
+        "drive_makespan_s": 5178.572744232216,
+        "avg_shuttle_movement_s": 50.44185033125699,
+        "movement_time_share": 0.792732780230883,
+        "reader_utilization": 0.11061927878186223,
+        "throughput_req_per_s": 19.31105064381756,
+        "throughput_mib_per_s": 1.3940498089446371,
+        "busiest_lane_work_over_mean": 1.0212916344897796
+      }
+    },
+    "growth": {
+      "rack_multiplier": 32.0,
+      "movement_time_multiplier": 5.887131366401068
+    }
+  }
+}
