@@ -1,0 +1,9 @@
+{
+  "leader_speed_m_s": 1.0,
+  "follower_speed_m_s": 2.0,
+  "initial_center_gap_m": 4.0,
+  "minimum_center_gap_m": 2.0,
+  "braking_m_s2": 1.0,
+  "checkpoint_m": 10.0,
+  "sample_interval_s": 0.02
+}

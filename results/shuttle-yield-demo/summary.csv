@@ -1,0 +1,5 @@
+case,shuttle,completion_s,horizontal_s,waiting_s,lane_change_s,added_time_s
+independent_lanes,A,4.0,4.0,0,0,0.0
+independent_lanes,B,4.0,4.0,0,0,0.0
+head_on_with_bypass,A,7.0,4.0,3,0,3.0
+head_on_with_bypass,B,10.0,4.0,0,6.0,6.0

@@ -1,0 +1,15 @@
+{
+  "pick_s": 3.0,
+  "reader_load_s": 3.0,
+  "free_movement_s": 7.0,
+  "following_movement_s": 9.0,
+  "free_service_s": 13.0,
+  "following_service_s": 15.0,
+  "stopped_waiting_s": 0,
+  "slowdown_penalty_s": 2.0,
+  "baseline_work_share": 0.8666666666666667,
+  "slowdown_penalty_share": 0.13333333333333333,
+  "minimum_center_gap_m": 2.0,
+  "assumptions": "A max 1m/s, B max 2m/s; acceleration/deceleration magnitude 1m/s^2; initial center gap 4m; minimum center gap 2m. A reader at x12, B reader at x10. Both start pickup at t0, move from rest at t3. Separate readers, zero reader queue; finish after reader loading, before data read. Scripted policy, not optimal or production calibrated.",
+  "validation": "Continuous-time gap extrema checked; endpoints stopped; accounting conserved"
+}

@@ -1,0 +1,7 @@
+case,phase,start_s,end_s
+B alone,Pickup,0,3.0
+B alone,Movement,3.0,10.0
+B alone,Reader load,10.0,13.0
+B following A,Pickup,0,3.0
+B following A,Movement,3.0,12.0
+B following A,Reader load,12.0,15.0

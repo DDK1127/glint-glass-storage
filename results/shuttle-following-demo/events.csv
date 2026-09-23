@@ -1,0 +1,4 @@
+phase,start_s,end_s,duration_s
+Cruise,0,1.5,1.5
+Brake,1.5,2.5,1.0
+Follow,2.5,8.0,5.5

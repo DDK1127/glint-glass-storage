@@ -1,0 +1,2 @@
+brake_start_s,brake_end_s,braking_trigger_gap_m,minimum_center_gap_m,uncontrolled_safe_gap_crossing_s,uncontrolled_center_overlap_s,follower_checkpoint_s,unobstructed_checkpoint_s,added_checkpoint_time_s,leader_checkpoint_s,stopped_waiting_s
+1.5,2.5,2.5,2.0,2.0,4.0,8.0,5.0,3.0,6.0,0

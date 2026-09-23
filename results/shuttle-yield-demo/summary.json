@@ -1,0 +1,118 @@
+{
+  "config": {
+    "distance_m": 6,
+    "speed_m_s": 2,
+    "accel_m_s2": 2,
+    "lane_change_s": 3
+  },
+  "events": [
+    {
+      "case": "independent_lanes",
+      "shuttle": "A",
+      "kind": "horizontal",
+      "start": 0,
+      "end": 4.0,
+      "source": "L0",
+      "target": "R0"
+    },
+    {
+      "case": "independent_lanes",
+      "shuttle": "B",
+      "kind": "horizontal",
+      "start": 0,
+      "end": 4.0,
+      "source": "R1",
+      "target": "L1"
+    },
+    {
+      "case": "head_on_with_bypass",
+      "shuttle": "A",
+      "kind": "waiting",
+      "start": 0,
+      "end": 3,
+      "source": "L0",
+      "target": "L0"
+    },
+    {
+      "case": "head_on_with_bypass",
+      "shuttle": "A",
+      "kind": "horizontal",
+      "start": 3,
+      "end": 7.0,
+      "source": "L0",
+      "target": "R0"
+    },
+    {
+      "case": "head_on_with_bypass",
+      "shuttle": "B",
+      "kind": "yield",
+      "start": 0,
+      "end": 3,
+      "source": "R0",
+      "target": "R1"
+    },
+    {
+      "case": "head_on_with_bypass",
+      "shuttle": "B",
+      "kind": "horizontal",
+      "start": 3,
+      "end": 7.0,
+      "source": "R1",
+      "target": "L1"
+    },
+    {
+      "case": "head_on_with_bypass",
+      "shuttle": "B",
+      "kind": "yield",
+      "start": 7.0,
+      "end": 10.0,
+      "source": "L1",
+      "target": "L0"
+    }
+  ],
+  "summary": [
+    {
+      "case": "independent_lanes",
+      "shuttle": "A",
+      "completion_s": 4.0,
+      "horizontal_s": 4.0,
+      "waiting_s": 0,
+      "lane_change_s": 0,
+      "added_time_s": 0.0
+    },
+    {
+      "case": "independent_lanes",
+      "shuttle": "B",
+      "completion_s": 4.0,
+      "horizontal_s": 4.0,
+      "waiting_s": 0,
+      "lane_change_s": 0,
+      "added_time_s": 0.0
+    },
+    {
+      "case": "head_on_with_bypass",
+      "shuttle": "A",
+      "completion_s": 7.0,
+      "horizontal_s": 4.0,
+      "waiting_s": 3,
+      "lane_change_s": 0,
+      "added_time_s": 3.0
+    },
+    {
+      "case": "head_on_with_bypass",
+      "shuttle": "B",
+      "completion_s": 10.0,
+      "horizontal_s": 4.0,
+      "waiting_s": 0,
+      "lane_change_s": 6.0,
+      "added_time_s": 6.0
+    }
+  ],
+  "validation": {
+    "passed": true,
+    "trajectory_continuity": true,
+    "reservation_conflicts": 0,
+    "parked_occupancy_checked": true
+  },
+  "scope": "Abstract lanes with sufficient body clearance; not a calibrated Silica traffic model. No reader or platter handling. Independent lanes are a reference, not an identical-start baseline."
+}

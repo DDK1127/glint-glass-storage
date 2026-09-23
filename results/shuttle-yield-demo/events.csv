@@ -1,0 +1,8 @@
+case,shuttle,kind,start,end,source,target
+independent_lanes,A,horizontal,0,4.0,L0,R0
+independent_lanes,B,horizontal,0,4.0,R1,L1
+head_on_with_bypass,A,waiting,0,3,L0,L0
+head_on_with_bypass,A,horizontal,3,7.0,L0,R0
+head_on_with_bypass,B,yield,0,3,R0,R1
+head_on_with_bypass,B,horizontal,3,7.0,R1,L1
+head_on_with_bypass,B,yield,7.0,10.0,L1,L0
