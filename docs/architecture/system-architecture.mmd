@@ -1,0 +1,13 @@
+flowchart LR
+  subgraph RackDomain[32 rack-local zones]
+    Req[Queued requests] --> Merge[Dispatch-time platter merge]
+    Merge --> RS[32 rack-side shuttles]
+    RS --> Rack[32 racks × 16 m]
+  end
+  Rack --> Ports[32 rack-facing ports]
+  Ports --> Input[8 input feeder buffers<br/>4 slots per reader]
+  Input --> Loaders[8 fixed reader-side loaders]
+  Loaders --> Readers[8 optical readers]
+  Readers --> Output[Output staging]
+  Output -. return task .-> RS
+  RS -. platter home .-> Rack

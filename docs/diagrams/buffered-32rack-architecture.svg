@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <title>Fixed 32-rack glass library with feeder buffers</title>
+  <desc>Overview and zoomed flow for rack-local shuttles, feeder buffers, reader-side loaders, readers, and platter return.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#51636B"/>
+    </marker>
+    <marker id="returnArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#B16A42"/>
+    </marker>
+    <style>
+      text { font-family: Arial, sans-serif; fill: #263238; letter-spacing: 0; }
+      .title { font-family: Georgia, serif; font-size: 34px; font-weight: 700; }
+      .subtitle { font-size: 17px; fill: #60727A; }
+      .section { font-size: 19px; font-weight: 700; }
+      .label { font-size: 15px; font-weight: 700; }
+      .small { font-size: 13px; fill: #60727A; }
+      .rack { fill: #EDF1F3; stroke: #7A8990; stroke-width: 2; }
+      .buffer { fill: #F6E9CE; stroke: #D9A441; stroke-width: 2; }
+      .reader { fill: #E3F0F3; stroke: #2B819B; stroke-width: 2; }
+      .loader { fill: #E8F1E9; stroke: #4F8B57; stroke-width: 2; }
+      .flow { fill: none; stroke: #51636B; stroke-width: 3; marker-end: url(#arrow); }
+      .return { fill: none; stroke: #B16A42; stroke-width: 3; stroke-dasharray: 8 6; marker-end: url(#returnArrow); }
+    </style>
+  </defs>
+  <rect width="1600" height="900" fill="#F7F9FA"/>
+  <text x="80" y="70" class="title">Fixed 32-Rack Feeder-Buffer Architecture</text>
+  <text x="82" y="103" class="subtitle">32 rack-local shuttles preserve locality; 8 feeder groups keep fixed readers supplied.</text>
+
+  <rect x="65" y="135" width="1470" height="285" rx="8" fill="#FFFFFF" stroke="#D7E0E4" stroke-width="2"/>
+  <text x="95" y="175" class="section">System overview</text>
+  <text x="105" y="212" class="label">32 racks × 16 m</text>
+  <text x="540" y="212" class="label">32 rack-facing ports</text>
+  <text x="815" y="212" class="label">8 feeder groups</text>
+  <text x="1110" y="212" class="label">8 reader-side loaders</text>
+  <text x="1392" y="212" class="label">8 readers</text>
+
+  <g transform="translate(105,225)">
+    <g><rect width="330" height="34" rx="3" class="rack"/><circle cx="300" cy="17" r="10" fill="#667580"/><text x="12" y="22" class="small">Rack 0</text></g>
+    <g transform="translate(0,45)"><rect width="330" height="34" rx="3" class="rack"/><circle cx="300" cy="17" r="10" fill="#667580"/><text x="12" y="22" class="small">Rack 1</text></g>
+    <g transform="translate(0,90)"><rect width="330" height="34" rx="3" class="rack"/><circle cx="300" cy="17" r="10" fill="#667580"/><text x="12" y="22" class="small">Rack 2</text></g>
+    <text x="160" y="142" text-anchor="middle" class="label">⋮</text>
+    <g transform="translate(0,145)"><rect width="330" height="34" rx="3" class="rack"/><circle cx="300" cy="17" r="10" fill="#667580"/><text x="12" y="22" class="small">Rack 31</text></g>
+  </g>
+  <line x1="445" y1="320" x2="555" y2="320" stroke="#51636B" stroke-width="3"/><polygon points="565,320 550,312 550,328" fill="#51636B"/>
+  <g transform="translate(580,245)">
+    <rect width="150" height="150" rx="6" fill="#F4F6F7" stroke="#7A8990" stroke-width="2"/>
+    <text x="75" y="42" text-anchor="middle" class="label">Rack ports</text>
+    <text x="75" y="75" text-anchor="middle" class="small">one per rack</text>
+    <text x="75" y="106" text-anchor="middle" class="small">local handoff</text>
+  </g>
+  <line x1="730" y1="320" x2="800" y2="320" stroke="#51636B" stroke-width="3"/><polygon points="810,320 795,312 795,328" fill="#51636B"/>
+  <g transform="translate(825,235)">
+    <rect width="180" height="170" rx="6" class="buffer"/>
+    <text x="90" y="38" text-anchor="middle" class="label">Feeder buffers</text>
+    <g fill="#FFFFFF" stroke="#D9A441"><rect x="28" y="62" width="50" height="36"/><rect x="102" y="62" width="50" height="36"/><rect x="28" y="112" width="50" height="36"/><rect x="102" y="112" width="50" height="36"/></g>
+  </g>
+  <line x1="1005" y1="320" x2="1080" y2="320" stroke="#51636B" stroke-width="3"/><polygon points="1090,320 1075,312 1075,328" fill="#51636B"/>
+  <g transform="translate(1105,250)">
+    <rect width="190" height="140" rx="6" class="loader"/>
+    <text x="95" y="48" text-anchor="middle" class="label">Reader-side</text>
+    <text x="95" y="72" text-anchor="middle" class="label">loaders</text>
+    <text x="95" y="108" text-anchor="middle" class="small">fixed, short path</text>
+  </g>
+  <line x1="1295" y1="320" x2="1362" y2="320" stroke="#51636B" stroke-width="3"/><polygon points="1372,320 1357,312 1357,328" fill="#51636B"/>
+  <g transform="translate(1385,260)">
+    <rect width="110" height="120" rx="6" class="reader"/>
+    <text x="55" y="52" text-anchor="middle" class="label">Reader</text>
+    <text x="55" y="80" text-anchor="middle" class="small">× 8</text>
+  </g>
+
+  <rect x="65" y="450" width="1470" height="380" rx="8" fill="#FFFFFF" stroke="#D7E0E4" stroke-width="2"/>
+  <text x="95" y="492" class="section">Zoom: one feeder group serves four rack-local zones</text>
+  <g transform="translate(105,530)">
+    <g><rect width="320" height="42" rx="3" class="rack"/><circle cx="278" cy="21" r="12" fill="#667580"/><text x="14" y="27" class="label">Rack 0 + Shuttle 0</text></g>
+    <g transform="translate(0,55)"><rect width="320" height="42" rx="3" class="rack"/><circle cx="278" cy="21" r="12" fill="#667580"/><text x="14" y="27" class="label">Rack 1 + Shuttle 1</text></g>
+    <g transform="translate(0,110)"><rect width="320" height="42" rx="3" class="rack"/><circle cx="278" cy="21" r="12" fill="#667580"/><text x="14" y="27" class="label">Rack 2 + Shuttle 2</text></g>
+    <g transform="translate(0,165)"><rect width="320" height="42" rx="3" class="rack"/><circle cx="278" cy="21" r="12" fill="#667580"/><text x="14" y="27" class="label">Rack 3 + Shuttle 3</text></g>
+  </g>
+  <line x1="425" y1="635" x2="545" y2="635" stroke="#51636B" stroke-width="3"/><polygon points="555,635 540,627 540,643" fill="#51636B"/>
+  <g transform="translate(570,545)">
+    <rect width="205" height="180" rx="6" class="buffer"/>
+    <text x="102" y="35" text-anchor="middle" class="label">Input buffer</text>
+    <text x="102" y="58" text-anchor="middle" class="small">4 staged platters</text>
+    <g fill="#FFFFFF" stroke="#D9A441"><rect x="25" y="82" width="65" height="32"/><rect x="115" y="82" width="65" height="32"/><rect x="25" y="128" width="65" height="32"/><rect x="115" y="128" width="65" height="32"/></g>
+  </g>
+  <line x1="775" y1="635" x2="855" y2="635" stroke="#51636B" stroke-width="3"/><polygon points="865,635 850,627 850,643" fill="#51636B"/>
+  <g transform="translate(880,570)"><rect width="190" height="125" rx="6" class="loader"/><text x="95" y="51" text-anchor="middle" class="label">Reader-side</text><text x="95" y="77" text-anchor="middle" class="label">loader</text></g>
+  <line x1="1070" y1="635" x2="1140" y2="635" stroke="#51636B" stroke-width="3"/><polygon points="1150,635 1135,627 1135,643" fill="#51636B"/>
+  <g transform="translate(1165,575)"><rect width="150" height="115" rx="6" class="reader"/><text x="75" y="52" text-anchor="middle" class="label">Reader 0</text><text x="75" y="80" text-anchor="middle" class="small">load · read · unload</text></g>
+  <polyline points="1240,690 1240,755 1040,755" fill="none" stroke="#B16A42" stroke-width="3" stroke-dasharray="8 6"/><polygon points="1025,755 1042,746 1042,764" fill="#B16A42"/>
+  <g transform="translate(815,735)"><rect width="210" height="60" rx="6" fill="#F5E8E0" stroke="#B16A42" stroke-width="2"/><text x="105" y="26" text-anchor="middle" class="label">Output staging</text><text x="105" y="46" text-anchor="middle" class="small">await rack return</text></g>
+  <polyline points="815,765 450,765 450,725" fill="none" stroke="#B16A42" stroke-width="3" stroke-dasharray="8 6"/><polygon points="450,710 441,727 459,727" fill="#B16A42"/>
+  <text x="570" y="803" class="small" fill="#B16A42">completed platter returns to its home rack</text>
+
+  <text x="80" y="870" class="subtitle">Demand-driven staging only: requests must arrive before a platter is prefetched.</text>
+</svg>

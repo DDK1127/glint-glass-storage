@@ -1,0 +1,13 @@
+{
+  "output_dir": "results/buffered-32rack-policy-comparison-smoke",
+  "base_config": "experiments/zone-nozone-comparison/sweep-4-64.json",
+  "seeds": [20260804],
+  "rack_count": 32,
+  "rack_length_m": 16,
+  "rack_spacing_m": 1.0,
+  "slots_per_rack": 100,
+  "reader_count": 8,
+  "buffer_slots_per_reader": 4,
+  "output_return_threshold": 32,
+  "buffer_drop_s": 1.0
+}

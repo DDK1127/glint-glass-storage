@@ -1,0 +1,15 @@
+flowchart LR
+  subgraph R[32 rack-local zones]
+    R0[Rack 0 + Shuttle 0]
+    R1[Rack 1 + Shuttle 1]
+    RN[Rack 31 + Shuttle 31]
+  end
+  R0 --> P[Rack-facing handoff ports]
+  R1 --> P
+  RN --> P
+  P --> I[8 input feeder buffers<br/>4 slots each]
+  I --> L[8 reader-side loaders]
+  L --> D[8 fixed readers]
+  D --> O[Output staging]
+  O -. platter return .-> P
+  P -. rack shuttle .-> R

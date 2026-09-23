@@ -1,0 +1,50 @@
+Table racks {
+  rack_id int [pk]
+  length_m float [not null]
+  reader_group_id int [not null]
+}
+
+Table shuttles {
+  shuttle_id int [pk]
+  home_rack_id int [not null, ref: > racks.rack_id]
+  available_at_s float [not null]
+}
+
+Table readers {
+  reader_id int [pk]
+  available_at_s float [not null]
+}
+
+Table buffer_slots {
+  reader_id int [not null, ref: > readers.reader_id]
+  slot_id int [not null]
+  platter_id int
+  indexes {
+    (reader_id, slot_id) [pk]
+  }
+}
+
+Table platters {
+  platter_id int [pk]
+  home_rack_id int [not null, ref: > racks.rack_id]
+  slot_x_m float [not null]
+  available_at_s float [not null]
+}
+
+Table requests {
+  request_id int [pk]
+  platter_id int [not null, ref: > platters.platter_id]
+  arrival_s float [not null]
+  bytes bigint [not null]
+  completed_at_s float
+}
+
+Table services {
+  service_id int [pk]
+  platter_id int [not null, ref: > platters.platter_id]
+  shuttle_id int [not null, ref: > shuttles.shuttle_id]
+  reader_id int [ref: > readers.reader_id]
+  started_at_s float [not null]
+  completed_at_s float
+  returned_at_s float
+}

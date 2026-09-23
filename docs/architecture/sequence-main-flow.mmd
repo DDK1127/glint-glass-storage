@@ -1,0 +1,23 @@
+sequenceDiagram
+  participant Q as Request Queue
+  participant S as Rack Shuttle
+  participant R as Rack
+  participant B as Input Buffer
+  participant L as Reader-side Loader
+  participant D as Reader
+  participant O as Output Staging
+  Q->>S: Dispatch merged platter work
+  S->>R: Fetch platter
+  S->>B: Deliver to rack-facing port
+  alt Buffer slot available
+    B->>L: Stage platter
+  else Buffer full
+    S-->>S: Wait outside buffer
+    B-->>S: Retry when a slot opens
+    S->>B: Stage platter
+  end
+  L->>D: Load platter
+  D-->>Q: Complete logical requests after read
+  D->>O: Unload completed platter
+  O->>S: Release return task
+  S->>R: Return platter to home slot
