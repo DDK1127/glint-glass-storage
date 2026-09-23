@@ -15,6 +15,9 @@ static-ownership evidence:
 | Azure capacity scalability | Does the mechanism remain under trace-derived object sizes and reuse? | A paired head-100k Azure batch confirms the same capacity trend under controlled platter packing. |
 | Static ownership | When do non-overlapping owners strand otherwise available resources? | Motivation and threshold studies quantify owner-level imbalance after request merge. |
 | Trace placement checks | How sensitive are observed zones to address and object placement? | LUN-address and Azure pilots document the mapping assumptions separately from source traces. |
+| Zone vs. No-Zone scheduling | Does shared shuttle mobility recover stranded capacity without losing locality? | Natural-arrival and paired closed-batch studies show the current greedy No-Zone policy lowers idle capacity but raises tail latency. |
+| Bounded coordination | Can a small-window conflict solver improve the greedy shared-mobility baseline? | Windowed CBS and a collision-free virtual upper bound quantify routing headroom. |
+| Feeder-buffer architecture | Can rack-local transport keep fixed readers supplied? | A fixed 32-rack pilot compares end-to-end static ownership, rack-local feeder transport, and shared No-Zone movement. |
 
 Earlier adaptive-zone, work-stealing, and skew studies remain available as
 supporting evidence. Superseded implementations live under `archive/` and are
@@ -67,6 +70,15 @@ glint-sim rq1 \
 ```
 
 The equivalent explicit runners live in `scripts/`.
+
+The active scheduling and architecture studies use explicit runners:
+
+```bash
+python scripts/run_zone_nozone_trace.py --smoke
+python scripts/run_windowed_cbs_study.py
+python scripts/run_virtual_nozone_study.py
+python scripts/run_buffered_32rack_study.py
+```
 
 ## Test
 

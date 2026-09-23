@@ -18,6 +18,12 @@ Each study has a quick `smoke.json` configuration and a retained-result
 | `static-ownership-threshold/` | Throughput-loss crossings under increasing post-merge owner concentration | `scripts/run_static_ownership_threshold.py` |
 | `capacity-scalability/` | Fixed-reader/shuttle capacity growth with fixed- and growing-footprint controls | `scripts/run_capacity_scalability.py` |
 | `azure-capacity-scalability/` | Capacity growth using Azure Blob identities, reuse, and object sizes | `scripts/run_azure_capacity_scalability.py` |
+| `zone-nozone-comparison/` | Natural Azure arrival replay with strict ownership and coordinated no-zone policies; optimistic holding abstraction | `scripts/run_zone_nozone_trace.py` |
+| `no-zone-conflict/` | Closed-batch nearest-idle replay with post-hoc continuous-time conflict exposure | `scripts/run_no_zone_conflict.py` |
+| `shuttle-following-demo/` | Deterministic same-direction braking and clearance example | `scripts/run_shuttle_following_demo.py` |
+| `windowed-cbs/` | Small-window conflict-tree routing over the same closed-batch Zone/No-Zone workload | `scripts/run_windowed_cbs_study.py` |
+| `no-zone-virtual-ideal/` | Collision-free shared-mobility upper bound with real reader and movement costs | `scripts/run_virtual_nozone_study.py` |
+| `buffered-32rack/` | Fixed 32-rack, 16 m feeder-buffer comparison with 32 rack shuttles and 8 readers | `scripts/run_buffered_32rack_study.py` |
 
 `adaptive-zone-upper-bound/dense.json` increases resolution to 40 skew points,
 including 1% spacing across the observed 30%-50% layout-transition region.

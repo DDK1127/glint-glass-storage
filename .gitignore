@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 .venv/
+node_modules/
 *.egg-info/
 build/
 dist/
@@ -21,6 +22,7 @@ results/.cache/
 results/.mplconfig/
 results/*-smoke/
 results/smoke-*/
+results/presentations/preview/
 
 # Large local research inputs
 data/*.csv
@@ -43,3 +45,7 @@ results/**/request_detail.csv
 results/**/epoch_detail.csv
 results/**/batch_detail.csv
 results/**/representative/
+results/**/audit-*/
+
+# Superseded local pilot output (replaced by buffered-32rack-policy-comparison)
+results/buffered-32rack/
