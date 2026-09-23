@@ -1,0 +1,22 @@
+{
+  "output_dir": "results/zone-nozone-natural-arrivals-4-64",
+  "batch_path": "data/processed/azure-functions-blob-2020/batches/batch-00000-head-100k.csv.gz",
+  "batch_sha256": "e4b785c458d5985b78baa7cdbc397541daaaef6edba2891d94835fec4d74f389",
+  "seeds": [20260804, 20260805, 20260806, 20260807, 20260808, 20260809, 20260810, 20260811, 20260812, 20260813],
+  "lengths_m": [4, 8, 16, 32, 64],
+  "platter_count": 640,
+  "levels": 8,
+  "mapping_slots_per_level": 100,
+  "level_spacing_m": 0.5,
+  "speed_m_s": 2.0,
+  "acceleration_m_s2": 2.0,
+  "crab_s_per_level": 3.0,
+  "clearance_x_m": 0.5,
+  "clearance_y_m": 0.65,
+  "pick_s": 3.0,
+  "place_s": 3.0,
+  "reader_load_s": 3.0,
+  "reader_unload_s": 3.0,
+  "reader_mount_s": 1.00035,
+  "reader_mib_s": 60.0
+}
