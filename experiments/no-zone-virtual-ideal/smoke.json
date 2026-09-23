@@ -1,0 +1,8 @@
+{
+  "output_dir": "results/no-zone-virtual-ideal-smoke",
+  "base_config": "experiments/zone-nozone-comparison/sweep-4-64.json",
+  "closed_baseline_runs": "results/zone-nozone-comparison-4-64/runs.csv",
+  "natural_baseline_runs": "results/zone-nozone-natural-arrivals-4-64/runs.csv",
+  "seeds": [20260804],
+  "lengths_m": [8, 32]
+}

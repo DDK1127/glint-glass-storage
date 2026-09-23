@@ -1,0 +1,8 @@
+{
+  "output_dir": "results/windowed-cbs-smoke",
+  "base_config": "experiments/zone-nozone-comparison/sweep-4-64.json",
+  "seeds": [20260804],
+  "lengths_m": [8, 32],
+  "tasks_per_side_window": 2,
+  "max_cbs_nodes": 64
+}
