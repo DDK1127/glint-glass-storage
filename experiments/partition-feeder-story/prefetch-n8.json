@@ -1,0 +1,11 @@
+{
+  "output_dir": "results/partition-feeder-prefetch-n8",
+  "requests": 384,
+  "seeds": [101, 202, 303, 404, 505],
+  "model": {},
+  "policies": ["zone", "nonzone_fifo"],
+  "buffer_slots": [0, 8, 16],
+  "read_s": [2, 8, 24],
+  "patterns": ["uniform", "hotspot"],
+  "length_m": 32
+}

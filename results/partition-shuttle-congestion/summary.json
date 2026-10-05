@@ -1,0 +1,100 @@
+{
+  "config": {
+    "output_dir": "results/partition-shuttle-congestion",
+    "requests": 384,
+    "seeds": [
+      101,
+      202,
+      303,
+      404,
+      505
+    ],
+    "shuttles": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      12,
+      14,
+      16,
+      20,
+      24,
+      28,
+      32
+    ],
+    "length_m": 32,
+    "read_s": 8,
+    "buffer_slots": 4,
+    "policy": "nonzone_fifo",
+    "pattern": "uniform",
+    "contention_holds_s": [
+      0,
+      0.9
+    ],
+    "focus_hold_s": 0.9,
+    "breakdown_shuttles": [
+      4,
+      8,
+      12,
+      16,
+      24,
+      32
+    ],
+    "model": {
+      "docking_bays": 32
+    },
+    "hold_note": "0.9 s was selected so the congested throughput peak falls at N=8 (illustrative scenario, not a calibrated value); 0.8 s peaks at N=9, 0.5 s at N=12, 1.0 s at N=7."
+  },
+  "effective_common": {
+    "rows": 8,
+    "slots_per_row": 80,
+    "length_m": 32.0,
+    "shuttles": 4,
+    "buffer_slots": 4,
+    "policy": "nonzone_fifo",
+    "speed_m_s": 2.0,
+    "acceleration_m_s2": 2.0,
+    "connector_step_s": 3.0,
+    "alignment_s": 0.5,
+    "ingress_s": 1.0,
+    "yield_penalty_s": 0.0,
+    "contention_hold_s": 0.0,
+    "pick_s": 1.0,
+    "place_s": 1.0,
+    "handoff_s": 1.0,
+    "load_mount_s": 2.0,
+    "read_s": 8.0,
+    "unload_s": 1.0,
+    "output_slots": 8,
+    "docking_bays": 32,
+    "lookahead": 16,
+    "aging_s": 120.0
+  },
+  "run_count": 170,
+  "peaks_by_hold": {
+    "0.0": {
+      "peak_shuttles": 20,
+      "peak_throughput_req_min": 5.405676648305676,
+      "peak_reader_busy": 0.9908082532989407,
+      "n_max": 32,
+      "n_max_throughput_req_min": 5.39333401644187,
+      "n_max_avg_shuttles_traffic_wait": 5.964212546539292
+    },
+    "0.9": {
+      "peak_shuttles": 8,
+      "peak_throughput_req_min": 3.2552234939681473,
+      "peak_reader_busy": 0.5967065286519972,
+      "n_max": 32,
+      "n_max_throughput_req_min": 0.896071743864444,
+      "n_max_avg_shuttles_traffic_wait": 28.661292116878336
+    }
+  },
+  "model": "contention_hold_s per blocking reservation, added to the contested block occupancy",
+  "wall_s": 11.639134166005533
+}

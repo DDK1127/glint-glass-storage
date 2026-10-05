@@ -1,0 +1,11 @@
+{
+  "output_dir": "results/sharing-buffer",
+  "model": {},
+  "requests": 480,
+  "seeds": [11, 23, 37],
+  "calibration_seed": 99173,
+  "calibration_requests": 256,
+  "load_fractions": [0.65, 0.9],
+  "group_sizes": [2, 4, 8],
+  "buffer_slots": [0, 1, 4]
+}

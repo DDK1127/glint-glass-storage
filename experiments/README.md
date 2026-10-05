@@ -24,6 +24,8 @@ Each study has a quick `smoke.json` configuration and a retained-result
 | `windowed-cbs/` | Small-window conflict-tree routing over the same closed-batch Zone/No-Zone workload | `scripts/run_windowed_cbs_study.py` |
 | `no-zone-virtual-ideal/` | Collision-free shared-mobility upper bound with real reader and movement costs | `scripts/run_virtual_nozone_study.py` |
 | `buffered-32rack/` | Fixed 32-rack, 16 m feeder-buffer comparison with 32 rack shuttles and 8 readers | `scripts/run_buffered_32rack_study.py` |
+| `sharing-buffer/` | Controlled 8-zone/8-shuttle/8-reader sharing and finite input/output staging baseline | `scripts/run_sharing_buffer_study.py` |
+| `partition-feeder-story/` | Current single-partition, one-reader motivation study: shuttle provisioning, Zone/Non-Zone, and feeder capacity | `scripts/run_partition_feeder_study.py` |
 
 `adaptive-zone-upper-bound/dense.json` increases resolution to 40 skew points,
 including 1% spacing across the observed 30%-50% layout-transition region.

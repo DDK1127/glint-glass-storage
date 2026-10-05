@@ -1,0 +1,77 @@
+{
+  "config": {
+    "output_dir": "results/partition-shuttle-provisioning",
+    "requests": 384,
+    "seeds": [
+      101,
+      202,
+      303,
+      404,
+      505
+    ],
+    "shuttles": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      10,
+      12,
+      16,
+      24,
+      32
+    ],
+    "length_m": 32,
+    "read_s": 8,
+    "buffer_slots": 4,
+    "policy": "nonzone_fifo",
+    "pattern": "uniform",
+    "yield_penalties_s": [
+      0
+    ],
+    "model": {
+      "docking_bays": 32
+    }
+  },
+  "effective_common": {
+    "rows": 8,
+    "slots_per_row": 80,
+    "length_m": 32.0,
+    "shuttles": 4,
+    "buffer_slots": 4,
+    "policy": "nonzone_fifo",
+    "speed_m_s": 2.0,
+    "acceleration_m_s2": 2.0,
+    "connector_step_s": 3.0,
+    "alignment_s": 0.5,
+    "ingress_s": 1.0,
+    "yield_penalty_s": 0.0,
+    "contention_hold_s": 0.0,
+    "pick_s": 1.0,
+    "place_s": 1.0,
+    "handoff_s": 1.0,
+    "load_mount_s": 2.0,
+    "read_s": 8.0,
+    "unload_s": 1.0,
+    "output_slots": 8,
+    "docking_bays": 32,
+    "lookahead": 16,
+    "aging_s": 120.0
+  },
+  "run_count": 60,
+  "analysis_by_penalty": {
+    "0.0": {
+      "single_shuttle_cycle_s": 65.65143928820515,
+      "reader_cycle_s": 11.0,
+      "ideal_shuttles_per_reader": 5.968312662564105,
+      "smallest_n_busy_ge_80pct": 8,
+      "smallest_n_busy_ge_90pct": 12,
+      "smallest_n_busy_ge_95pct": 16,
+      "peak_throughput_shuttles": 24
+    }
+  },
+  "ideal_definition": "N x (N=1 reader busy fraction), capped at 100%; ideal ratio = (1 / N=1 throughput) / (load+read+unload)",
+  "wall_s": 20.90766587498365
+}

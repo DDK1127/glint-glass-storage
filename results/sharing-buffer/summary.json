@@ -1,0 +1,91 @@
+{
+  "config": {
+    "output_dir": "results/sharing-buffer",
+    "model": {},
+    "requests": 480,
+    "seeds": [
+      11,
+      23,
+      37
+    ],
+    "calibration_seed": 99173,
+    "calibration_requests": 256,
+    "load_fractions": [
+      0.65,
+      0.9
+    ],
+    "group_sizes": [
+      2,
+      4,
+      8
+    ],
+    "buffer_slots": [
+      0,
+      1,
+      4
+    ]
+  },
+  "effective_model": {
+    "zones": 8,
+    "slots_per_zone": 80,
+    "lane_length_m": 16.0,
+    "zone_pitch_m": 1.0,
+    "horizontal_speed_m_s": 2.0,
+    "horizontal_acceleration_m_s2": 2.0,
+    "trunk_speed_m_s": 0.3333333333333333,
+    "alignment_s": 0.5,
+    "pick_s": 1.0,
+    "place_s": 1.0,
+    "handoff_s": 1.0,
+    "load_s": 1.0,
+    "mount_s": 1.0,
+    "read_mib": 480.0,
+    "reader_mib_s": 60.0,
+    "unload_s": 1.0
+  },
+  "calibration": {
+    "mode": "fixed",
+    "group_size": 1,
+    "buffer_slots": 0,
+    "requests": 256,
+    "returned": 256,
+    "latency_mean_s": 336.5705138022818,
+    "latency_p99_s": 645.3780747483389,
+    "read_completion_span_s": 682.5193076749192,
+    "system_span_s": 694.3193076749192,
+    "movement_s": 4141.5729848411775,
+    "traffic_wait_s": 0.0,
+    "delivery_wait_s": 52.569979462967844,
+    "output_block_s": 0.0,
+    "cross_zone_fetch_fraction": 0,
+    "cross_zone_reader_fraction": 0,
+    "max_input_depth": 0,
+    "max_docked_shuttles": 1,
+    "excluded_ready_work_idle_shuttle_s": 99.45610866081631,
+    "idle_reader_with_demand_s": 2065.2429643041423,
+    "input_slot_occupancy_s": 0.0,
+    "observed_read_throughput_req_s": 0.37508096418853487,
+    "dispatch_queue_mean_s": 314.55127413399924,
+    "fetch_delivery_mean_s": 10.81388818600535,
+    "delivery_wait_mean_s": 0.20535148227721814,
+    "handoff_mean_s": 1.0,
+    "input_wait_mean_s": 0.0,
+    "reader_service_mean_s": 10.0,
+    "trace_sha256": "18416a05f91b60591a2b2d8594e456a9fa1615473038cd9f1179e565a0869bef"
+  },
+  "run_count": 252,
+  "source_sha256": {
+    "scripts/run_sharing_buffer_study.py": "75fb3a02d19e5b4598520b9e427ec9a21e9b611659b29b7bb26f54655a4bfd6c",
+    "glass_sim/sharing_buffer_study.py": "f5148ad7faea472c0107d19e0c59bcf99bff7ec05b01d1901f4b29084701ecbd"
+  },
+  "validation": {
+    "all_requests_read_and_returned": true,
+    "paired_traces": true,
+    "finite_input_output": true,
+    "exclusive_routes": true,
+    "exclusive_shuttles_readers": true,
+    "causal_service": true,
+    "mean_latency_accounting": true
+  },
+  "wall_s": 138.6865353330213
+}

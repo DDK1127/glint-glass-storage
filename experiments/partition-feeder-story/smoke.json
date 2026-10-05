@@ -1,0 +1,10 @@
+{
+  "output_dir": "results/partition-feeder-story-smoke",
+  "requests": 64,
+  "seeds": [101],
+  "model": {},
+  "provision": {"shuttles": [1, 4, 8], "lengths_m": [16, 64], "read_s": [8]},
+  "coordination": {"shuttles": [4, 8], "length_m": 32, "read_s": 8, "patterns": ["uniform", "hotspot"]},
+  "buffer": {"shuttles": [4, 8], "capacities": [0, 1, 4], "length_m": 32, "read_s": [8]},
+  "online": {"shuttles": 4, "capacities": [0, 4], "length_m": 32, "read_s": 8, "offered_reader_load": 0.6, "patterns": ["uniform", "hotspot"]}
+}
