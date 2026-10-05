@@ -1,0 +1,92 @@
+{
+  "config": {
+    "output_dir": "results/partition-feeder-story",
+    "requests": 384,
+    "seeds": [
+      101,
+      202,
+      303,
+      404,
+      505
+    ],
+    "model": {},
+    "provision": {
+      "shuttles": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "lengths_m": [
+        16,
+        64
+      ],
+      "read_s": [
+        2,
+        8,
+        24
+      ]
+    },
+    "coordination": {
+      "shuttles": [
+        2,
+        4,
+        8
+      ],
+      "length_m": 32,
+      "read_s": 8,
+      "patterns": [
+        "uniform",
+        "hotspot"
+      ]
+    },
+    "buffer": {
+      "shuttles": [
+        4,
+        8
+      ],
+      "capacities": [
+        0,
+        1,
+        2,
+        4
+      ],
+      "length_m": 32,
+      "read_s": [
+        2,
+        8,
+        24
+      ]
+    },
+    "online": {
+      "shuttles": 4,
+      "capacities": [
+        0,
+        4
+      ],
+      "length_m": 32,
+      "read_s": 8,
+      "offered_reader_load": 0.6,
+      "patterns": [
+        "uniform",
+        "hotspot"
+      ]
+    }
+  },
+  "run_count": 490,
+  "source_sha256": {
+    "glass_sim/partition_feeder_study.py": "47d10f71b0b3ef7ad0b7fb553d4ddce90a1da7b689a0dabb97f87bcf026a44ce",
+    "scripts/run_partition_feeder_study.py": "7a8ce2e0bc5fc1ba94dca0958bf836d19e23803a57dfe28806f54c824ed9c595"
+  },
+  "config_sha256": "1c6c58f471d4e503d3c7ec7ff9ec833d33193c13578ae7b0c5a8393ac7f6e246",
+  "validation": {
+    "all_read_and_returned": true,
+    "paired_requests": true,
+    "finite_staging": true,
+    "exclusive_resources": true,
+    "causal_service": true,
+    "latency_accounting": true
+  },
+  "simulation_wall_s": 190.73810487502487,
+  "python": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 17.0.0 (clang-1700.6.4.2)]"
+}

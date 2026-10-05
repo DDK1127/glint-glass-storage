@@ -1,0 +1,13 @@
+{
+  "output_dir": "results/partition-shuttle-provisioning",
+  "requests": 384,
+  "seeds": [101, 202, 303, 404, 505],
+  "shuttles": [1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 24, 32],
+  "length_m": 32,
+  "read_s": 8,
+  "buffer_slots": 4,
+  "policy": "nonzone_fifo",
+  "pattern": "uniform",
+  "yield_penalties_s": [0],
+  "model": {"docking_bays": 32}
+}

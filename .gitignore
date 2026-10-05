@@ -49,3 +49,9 @@ results/**/audit-*/
 
 # Superseded local pilot output (replaced by buffered-32rack-policy-comparison)
 results/buffered-32rack/
+
+# Presentation outputs and local authoring workspaces stay local
+*.pptx
+*.docx
+presentations/
+tmp/

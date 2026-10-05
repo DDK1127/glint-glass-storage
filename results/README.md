@@ -25,9 +25,12 @@ superseded model iterations should be regenerated rather than accumulated.
 | `windowed-cbs/` | Static, Greedy No-Zone, and bounded small-window CBS over paired closed-batch work |
 | `no-zone-virtual-ideal/` | Collision-free Virtual No-Zone comparison against Static and Greedy baselines |
 | `buffered-32rack-policy-comparison/` | Fixed 32-rack feeder-buffer pilot comparing 8-zone end-to-end, rack-local, and shared movement |
+| `sharing-buffer/` | New controlled 8-zone sharing/staging matrix; see `OBSERVATIONS_ZH.md` for initial findings and topology limitations |
+| `partition-feeder-story/` | Current one-reader/multiple-shuttle study: 490 controlled runs, paired controls, parameter boundaries and storyline |
 | `shuttle-following-demo/`, `shuttle-following-service/` | Same-direction clearance and pickup-to-reader service examples |
 | `shuttle-yield-demo/` | Two-shuttle abstract bypass/yield example |
 | `presentations/glint_zone_nozone_story_en.pptx` | Editable English Zone/No-Zone research-story deck with validated experiment figures |
+| `presentations/glint_partition_feeder_story_zh.pptx` | 20-slide Traditional Chinese single-partition research story with native editable charts and speaker notes |
 
 Superseded Zipf, artificial temporal-skew, and batch-skew outputs moved to
 `archive/results/`. Matching active configurations live in `experiments/`;

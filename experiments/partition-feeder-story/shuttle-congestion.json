@@ -1,0 +1,52 @@
+{
+  "output_dir": "results/partition-shuttle-congestion",
+  "requests": 384,
+  "seeds": [
+    101,
+    202,
+    303,
+    404,
+    505
+  ],
+  "shuttles": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    12,
+    14,
+    16,
+    20,
+    24,
+    28,
+    32
+  ],
+  "length_m": 32,
+  "read_s": 8,
+  "buffer_slots": 4,
+  "policy": "nonzone_fifo",
+  "pattern": "uniform",
+  "contention_holds_s": [
+    0,
+    0.9
+  ],
+  "focus_hold_s": 0.9,
+  "breakdown_shuttles": [
+    4,
+    8,
+    12,
+    16,
+    24,
+    32
+  ],
+  "model": {
+    "docking_bays": 32
+  },
+  "hold_note": "0.9 s was selected so the congested throughput peak falls at N=8 (illustrative scenario, not a calibrated value); 0.8 s peaks at N=9, 0.5 s at N=12, 1.0 s at N=7."
+}
