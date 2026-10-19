@@ -1,0 +1,20 @@
+{
+  "question": "Across offered load, what do an LRU and a cost-aware (GreedyDual-Size) platter cache change compared with the FIFO read-ahead baseline, and why?",
+  "trace": "Fujitsu SYSTOR'17 VDI, 2016-02-22, LUNs 0,1,2,3,4,6, reads only",
+  "placement": "contig_balanced",
+  "library": "640 slots, 1 TB platters, 1 reader, 8 Zone shuttles, B1 Silica scheduler, contention hold 0.5 s",
+  "request_overhead_s": [0.25, 1.0],
+  "sampling": {"windows_start_hour": [8, 9, 10, 11, 12, 13], "span_s": 600, "requests": 2000},
+  "load_multipliers": [0.3, 0.45, 0.6, 0.75, 0.9],
+  "load_note": "arrival rate = multiplier x the baseline's throughput with all requests at t=0 (per overhead); results are plotted against the absolute arrival rate, so no single load value has to be chosen",
+  "variants": {
+    "baseline": {"buffer_slots": 8, "cache_slots": 0},
+    "lru_2": {"buffer_slots": 8, "cache_slots": 2, "cache_policy": "lru"},
+    "lru_8": {"buffer_slots": 8, "cache_slots": 8, "cache_policy": "lru"},
+    "gds_2": {"buffer_slots": 8, "cache_slots": 2, "cache_policy": "gds"},
+    "gds_8": {"buffer_slots": 8, "cache_slots": 8, "cache_policy": "gds"},
+    "split_6_2": {"buffer_slots": 6, "cache_slots": 2, "cache_policy": "lru"},
+    "split_4_4": {"buffer_slots": 4, "cache_slots": 4, "cache_policy": "lru"}
+  },
+  "seed": 1
+}

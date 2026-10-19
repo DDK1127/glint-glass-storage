@@ -1,0 +1,14 @@
+{
+  "question": "Which glass-specific properties do the baseline read-ahead buffer (FIFO) and an LRU platter cache ignore, and what does each cost?",
+  "trace": "Fujitsu SYSTOR'17 VDI, 2016-02-22, LUNs 0,1,2,3,4,6, reads only",
+  "placement": "contig_balanced: sequential 1 TB platters spread so every zone gets ~12.5% of the day's reads (zone imbalance deliberately left out of this study)",
+  "library": "640 slots, 1 reader, 8 Zone shuttles, B1 Silica scheduler, contention hold 0.5 s",
+  "request_overhead_s": [0.25, 1.0],
+  "sampling": {"windows_start_hour": [8, 9, 10, 11, 12, 13], "span_s": 600, "requests": 2000},
+  "load": 0.75,
+  "load_note": "arrival rate = 0.75 x baseline (K=8, C=0) throughput with all requests at t=0; identical arrivals for every variant",
+  "g1_cache_slots": [0, 2, 4, 8, 16],
+  "g2_wait_windows_s": [10, 30, 60, 120, 300],
+  "g5_budget": {"total_slots": 8, "splits_buffer_cache": [[8, 0], [6, 2], [4, 4], [2, 6]]},
+  "seed": 1
+}
