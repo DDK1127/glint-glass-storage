@@ -11,7 +11,7 @@
 | 要素 | 內容 | 依據 |
 | --- | --- | --- |
 | 系統 | Project Silica 式的玻璃儲存 library：platter 固定在架上，shuttle 搬到 read drive | [事實] Silica SOSP'23 §2、§4 |
-| 會發生的條件 | 短時間熱區：每 100 個 request 為一段時，最忙的 zone 分到 47% 的工作（8 zones，平均分配是 12.5%）；拉長到 5,000 個 request 只剩 17.7% | [事實] 本專案 Azure trace 分析（`results/natural-trace-skew-rq1`），隨機放置 |
+| 會發生的條件 | 短時間熱區：每 100 個 request 為一段時，最忙的 zone 分到 47% 的工作（8 zones，平均分配是 12.5%）；拉長到 5,000 個 request 只剩 17.7% | [事實] 本專案 Fujitsu VDI trace（Lee et al. SYSTOR'17，`data/2016022211-LUN0.csv`）分析（`results/natural-trace-skew-rq1`），隨機放置 |
 | | 放置保留局部性時，偏斜會持續存在：連續 LBA 放置時，最忙 zone 佔 55.6%；依應用程式放置時，固定分區的吞吐量是理想值的 74.9% | [事實] 同上；`results/azure-static-zone-pilot`。真實 platter 放置未知，屬條件性證據 |
 | 現有做法 | 分區數 = shuttle 數，每區 1 台 shuttle、至少 1 個 read drive；正常時 shuttle 不出區。負載差超過門檻時觸發 work stealing，以最短路徑跨區，論文自述「may create additional congestion」 | [事實] Silica §4 |
 | 現有做法的損失 | Zipf 偏斜下：不做平衡時尾端完成時間超過 21 h；work stealing 降到 11.5 h，但尾端搬運時間從 29.4 s 增加到 76 s。沒有搬運成本的理想情況（NS）為 7.5 h | [事實] Silica §7.5、Fig. 7(c) |
