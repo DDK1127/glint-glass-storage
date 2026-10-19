@@ -1,0 +1,10 @@
+{
+  "question": "Read-ahead feeder buffer: how many reader-front slots (K) are worth having on the real trace?",
+  "trace": "Fujitsu VDI (Lee et al. SYSTOR'17), data/2016022211-LUN0.csv, reads only",
+  "policy": "B1 (Silica: earliest queued platter, merge same platter), Zone, 8 shuttles fetching in parallel; buffer is FIFO",
+  "buffer_slots": [0, 1, 2, 4, 8, 16, 32],
+  "mappings": ["contiguous", "hash_1gib"],
+  "online": {"windows": 6, "requests": 2000, "loads": [0.75, 0.9],
+             "load_note": "arrival rate fixed per mapping = load x B1 burst throughput at K=8, so every K sees the same arrivals"},
+  "knee_rule": "smallest K whose mean latency is within 5% of the best K (per mapping and load)"
+}

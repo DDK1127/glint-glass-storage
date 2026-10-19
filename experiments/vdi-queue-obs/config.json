@@ -1,0 +1,11 @@
+{
+  "question": "With real trace requests only, where does Silica's scheduler (B1, Zone) lose time, and is the loss tied to the per-zone request queues?",
+  "trace": "Fujitsu enterprise VDI block trace (Lee et al., SYSTOR'17), data/2016022211-LUN0.csv, reads only; same trace family as GAIA",
+  "system": "IOConfig defaults: 1 reader, 8 rows x 80 slots, 8 Zone shuttles, buffer 8, contention hold 0.5 s",
+  "mappings": ["contiguous", "hash_1gib"],
+  "mapping_note": "The trace has no platter locations. contiguous keeps address locality; hash_1gib removes it (each 1 GiB extent on a random platter).",
+  "burst": {"windows": 20, "requests": 400, "note": "400 consecutive trace reads all arriving at t=0 (order and sizes from the trace)"},
+  "online": {"windows": 6, "requests": 2000, "loads": [0.5, 0.75, 0.9],
+             "note": "trace time axis stretched so the mean arrival rate equals load x the B1 burst throughput of the same mapping; burst shape kept"},
+  "metrics_note": "restricted idle = shuttle idle while queued platters exist only in other zones"
+}
