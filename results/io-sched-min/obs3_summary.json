@@ -1,0 +1,14 @@
+{
+  "independent": {
+    "large_read_time": 0.20952343765328713,
+    "gate_wait_during_large": 0.8714490172520234,
+    "starved_fraction": 0.4152755112060831,
+    "starved_soon_after_large": 0.15563544276986072
+  },
+  "restore_k160": {
+    "large_read_time": 0.35586975384652014,
+    "gate_wait_during_large": 0.7780183005895971,
+    "starved_fraction": 0.192954739186919,
+    "starved_soon_after_large": 0.1936941387291715
+  }
+}
