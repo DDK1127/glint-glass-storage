@@ -55,6 +55,23 @@ class IOConfig:
     # cache_slots places (LRU) instead of being returned; a later request for it
     # is moved straight into the read-ahead buffer (handoff_s), with no shuttle.
     cache_slots: int = 0
+    # Eviction: "lru", or "gds" = GreedyDual-Size (Cao & Irani, USITS'97) with the
+    # platter's free-flow one-way fetch time as its cost, so far platters stay longer.
+    cache_policy: str = "lru"
+    # Who may fetch or return a platter: "zone" (Silica partitions: owner only),
+    # "zone_ws" (owner, plus work stealing reconstructed from Silica SOSP'23 §4:
+    # an idle shuttle with no own work helps the most backlogged zone once its
+    # queued requests exceed ws_threshold, at most ws_max_helpers per zone), or
+    # "nonzone" (any idle shuttle; the one that reaches the platter first).
+    dispatch: str = "zone"
+    # "return_first" (default): an idle shuttle first takes a read platter back home;
+    # "fetch_first": it first fetches platters that have waiting requests, and returns
+    # read platters only when it has nothing to fetch (or the output area is full).
+    # fetch_first only fetches as many platters as the read-ahead queue can still take,
+    # otherwise shuttles would park full platters at the reader and deadlock the returns.
+    return_priority: str = "return_first"
+    ws_threshold: int = 2
+    ws_max_helpers: int = 2
 
     def validate(self):
         if self.rows != 8 or self.shuttles not in (1, 2, 4, 8):
@@ -62,6 +79,14 @@ class IOConfig:
         for name in ("slots_per_row", "output_slots", "docking_bays"):
             if not isinstance(getattr(self, name), int) or getattr(self, name) < 1:
                 raise ValueError(f"Invalid {name}")
+        if self.return_priority not in ("return_first", "fetch_first"):
+            raise ValueError("return_priority must be return_first or fetch_first")
+        if self.cache_policy not in ("lru", "gds"):
+            raise ValueError("cache_policy must be lru or gds")
+        if self.dispatch not in ("zone", "zone_ws", "nonzone"):
+            raise ValueError("dispatch must be zone, zone_ws or nonzone")
+        if not isinstance(self.ws_threshold, int) or self.ws_threshold < 0 or not isinstance(self.ws_max_helpers, int) or self.ws_max_helpers < 1:
+            raise ValueError("Invalid work-stealing parameters")
         if not isinstance(self.cache_slots, int) or self.cache_slots < 0 or (self.cache_slots and not self.buffer_slots):
             raise ValueError("cache_slots must be >= 0 and needs a read-ahead buffer")
         if not isinstance(self.buffer_slots, int) or self.buffer_slots < 0:
@@ -169,7 +194,7 @@ SCHEDULERS = {s.name: s for s in (FIFO, SilicaFIFO)}
 
 # ---------------------------------------------------------------- simulation
 class IOSimulation:
-    def __init__(self, config: IOConfig, requests: list[Request], scheduler: Scheduler, record=False):
+    def __init__(self, config: IOConfig, requests: list[Request], scheduler: Scheduler, record=False, observer=None):
         config.validate()
         if not requests or [r.index for r in requests] != list(range(len(requests))):
             raise ValueError("Requests need consecutive IDs")
@@ -198,8 +223,14 @@ class IOSimulation:
         self.cache: OrderedDict[int, int] = OrderedDict()   # platter -> trip that read it, LRU first
         self.inbox_reserved = 0                              # buffer slots promised to cache moves
         self.cache_hits = self.evictions = 0
+        self.gds_h: dict[int, float] = {}   # GreedyDual-Size priority of each cached platter
+        self.gds_l = 0.0
+        self.helpers = [0] * config.shuttles   # zone_ws: non-owner shuttles working for each zone
+        self.helper_trips = 0
+        self.fetching = 0   # fetches started but not yet handed to the reader
         # optional state trace: (time, reader_state, size of request being read, buffer, shuttles at gate, idle shuttles)
         self.trace = [] if record else None
+        self.observer = observer   # optional callback(sim, dt): sees the state that held for the next dt seconds
         self.reader_state_s = dict(read=0.0, blocked=0.0, unload=0.0, idle_demand=0.0, idle_empty=0.0)
         for r in requests:
             self.push(r.arrival_s, "arrival", r.index)
@@ -210,9 +241,78 @@ class IOSimulation:
         self.serial += 1
         heapq.heappush(self.events, (when, self.serial, kind, payload))
 
+    def free(self):
+        return [p for p, q in self.queue.items() if q and p not in self.away]
+
+    def zone_backlog(self):
+        backlog = [0] * self.c.shuttles
+        for p in self.free():
+            backlog[self.c.owner(p)] += len(self.queue[p])
+        return backlog
+
+    def help_zone(self, sid, backlog):
+        """zone_ws: the zone an idle shuttle without own work may help, or None."""
+        if backlog[sid]:
+            return None
+        zones = [z for z in range(self.c.shuttles) if z != sid and backlog[z] > self.c.ws_threshold
+                 and self.helpers[z] < self.c.ws_max_helpers]
+        return max(zones, key=lambda z: (backlog[z], -z), default=None)
+
     def accessible(self, sid):
-        """Queued platters at home that shuttle sid may fetch (Zone ownership)."""
-        return [p for p, q in self.queue.items() if q and p not in self.away and self.c.owner(p) == sid]
+        """Queued platters at home that shuttle sid may fetch (sid None: any shuttle)."""
+        free = self.free()
+        if self.c.dispatch == "nonzone" or sid is None:
+            return free
+        own = [p for p in free if self.c.owner(p) == sid]
+        if own or self.c.dispatch == "zone":
+            return own
+        zone = self.help_zone(sid, self.zone_backlog())
+        return [p for p in free if self.c.owner(p) == zone] if zone is not None else []
+
+    def fetch_cost(self, platter):
+        return sum(d for _, d in self.rail.path(Rail.READER, self.c.home(platter)))
+
+    def eta(self, s, target):
+        return self.rail.estimate(s["position"], target, self.clock)[1]
+
+    def return_shuttle(self, platter):
+        idle = [s for s in self.shuttles if s["idle"]]
+        owner = self.shuttles[self.c.owner(platter)]
+        if self.c.dispatch == "zone" or owner["idle"]:
+            return owner if owner["idle"] else None
+        if self.c.dispatch == "zone_ws":
+            backlog, zone = self.zone_backlog(), self.c.owner(platter)
+            idle = [s for s in idle if not backlog[s["id"]]] if self.helpers[zone] < self.c.ws_max_helpers else []
+        return min(idle, key=lambda s: (self.eta(s, Rail.READER), s["id"]), default=None)
+
+    def start_fetch(self, platter, s):
+        q = self.queue[platter]
+        served = list(q) if self.sched.merge else [q[0]]
+        del q[:len(served)]
+        if not q:
+            del self.queue[platter]
+        helper = self.c.owner(platter) if self.c.dispatch == "zone_ws" and self.c.owner(platter) != s["id"] else None
+        if helper is not None:
+            self.helpers[helper] += 1
+            self.helper_trips += 1
+        tid = len(self.trips)
+        self.trips.append(dict(trip=tid, platter=platter, shuttle=s["id"], requests=served,
+                               dispatch_s=self.clock, move_s=0.0, traffic_wait_s=0.0,
+                               gate_wait_s=0.0, return_assigned=False, read_done=False,
+                               fetch_helper=helper, return_helper=None))
+        self.away[platter] = tid
+        self.unread += 1
+        self.fetching += 1
+        s["idle"] = False
+        self.move(s["id"], tid, self.c.home(platter), "fetch", "at_platter")
+
+    def decide(self, sid):
+        t0 = time.perf_counter()
+        platter = self.sched.pick_fetch(self, sid)
+        self.decision_cpu_s += time.perf_counter() - t0
+        self.decisions += 1
+        self.decision_queue_sum += sum(len(q) for q in self.queue.values())
+        return platter
 
     def move(self, sid, tid, target, phase, event):
         shuttle, trip = self.shuttles[sid], self.trips[tid]
@@ -223,39 +323,55 @@ class IOSimulation:
 
     # -- decisions
     def dispatch(self):
+        if self.c.return_priority == "fetch_first" and len(self.output) < self.c.output_slots:
+            changed = self.dispatch_fetches(room=True)
+            return self.dispatch_returns() or changed
+        changed = self.dispatch_returns()
+        return self.dispatch_fetches() or changed
+
+    def dispatch_returns(self):
         changed = False
         for tid in list(self.output):
             trip = self.trips[tid]
             if trip["return_assigned"]:
                 continue
-            s = self.shuttles[self.c.owner(trip["platter"])]
-            if s["idle"]:
-                s["idle"], trip["return_assigned"] = False, True
-                self.move(s["id"], tid, Rail.READER, "to_output", "at_output")
-                changed = True
-        for s in self.shuttles:
-            if not s["idle"]:
+            s = self.return_shuttle(trip["platter"])
+            if s is None:
                 continue
-            t0 = time.perf_counter()
-            platter = self.sched.pick_fetch(self, s["id"])
-            self.decision_cpu_s += time.perf_counter() - t0
-            self.decisions += 1
-            self.decision_queue_sum += sum(len(q) for q in self.queue.values())
+            s["idle"], trip["return_assigned"] = False, True
+            zone = self.c.owner(trip["platter"])
+            if self.c.dispatch == "zone_ws" and s["id"] != zone:
+                self.helpers[zone] += 1
+                trip["return_helper"] = zone
+            self.move(s["id"], tid, Rail.READER, "to_output", "at_output")
+            changed = True
+        return changed
+
+    def queue_room(self):
+        """Read-ahead slots not yet claimed by the queue, a handoff, or a fetch in flight."""
+        return self.c.buffer_slots - len(self.inbox) - self.inbox_reserved - self.fetching
+
+    def dispatch_fetches(self, room=False):
+        """room=True: only start fetches the read-ahead queue can still take."""
+        changed = False
+        if self.c.dispatch == "nonzone":
+            # pick the platter first, then the idle shuttle that reaches it soonest
+            while any(s["idle"] for s in self.shuttles) and (not room or self.queue_room() > 0):
+                platter = self.decide(None)
+                if platter is None:
+                    break
+                home = self.c.home(platter)
+                s = min((s for s in self.shuttles if s["idle"]), key=lambda s: (self.eta(s, home), s["id"]))
+                self.start_fetch(platter, s)
+                changed = True
+            return changed
+        for s in self.shuttles:
+            if not s["idle"] or (room and self.queue_room() <= 0):
+                continue
+            platter = self.decide(s["id"])
             if platter is None:
                 continue
-            q = self.queue[platter]
-            served = list(q) if self.sched.merge else [q[0]]
-            del q[:len(served)]
-            if not q:
-                del self.queue[platter]
-            tid = len(self.trips)
-            self.trips.append(dict(trip=tid, platter=platter, shuttle=s["id"], requests=served,
-                                   dispatch_s=self.clock, move_s=0.0, traffic_wait_s=0.0,
-                                   gate_wait_s=0.0, return_assigned=False, read_done=False))
-            self.away[platter] = tid
-            self.unread += 1
-            s["idle"] = False
-            self.move(s["id"], tid, self.c.home(platter), "fetch", "at_platter")
+            self.start_fetch(platter, s)
             changed = True
         return changed
 
@@ -280,6 +396,7 @@ class IOSimulation:
                 continue
             served = self.queue.pop(platter)
             del self.cache[platter]
+            self.gds_h.pop(platter, None)
             tid = len(self.trips)
             self.trips.append(dict(trip=tid, platter=platter, shuttle=None, requests=served, from_cache=True,
                                    dispatch_s=self.clock, move_s=0.0, traffic_wait_s=0.0,
@@ -337,6 +454,9 @@ class IOSimulation:
             self.move(sid, tid, Rail.READER, "delivery", "at_reader")
         elif kind == "handed_off":
             sid, tid = payload
+            self.fetching -= 1
+            if self.trips[tid].get("fetch_helper") is not None:
+                self.helpers[self.trips[tid]["fetch_helper"]] -= 1
             self.gate_busy = False
             self.shuttles[sid]["idle"] = True
             if self.c.buffer_slots:
@@ -363,9 +483,17 @@ class IOSimulation:
         elif kind == "unloaded":
             self.reader_state, self.reader_trip = "idle", None
             if self.c.cache_slots:
-                self.cache[self.trips[payload]["platter"]] = payload
+                platter = self.trips[payload]["platter"]
+                self.cache[platter] = payload
+                self.gds_h[platter] = self.gds_l + self.fetch_cost(platter)
                 if len(self.cache) > self.c.cache_slots:
-                    _, victim = self.cache.popitem(last=False)   # least recently used goes home
+                    if self.c.cache_policy == "lru":
+                        out, victim = self.cache.popitem(last=False)   # least recently used goes home
+                    else:
+                        out = min(self.cache, key=lambda p: (self.gds_h[p], p))
+                        victim = self.cache.pop(out)
+                        self.gds_l = self.gds_h[out]
+                    self.gds_h.pop(out, None)
                     self.output.append(victim)
                     self.evictions += 1
             else:
@@ -381,6 +509,8 @@ class IOSimulation:
         elif kind == "returned":
             sid, tid = payload
             trip = self.trips[tid]
+            if trip.get("return_helper") is not None:
+                self.helpers[trip["return_helper"]] -= 1
             trip["returned_s"] = self.clock
             del self.away[trip["platter"]]
             self.shuttles[sid]["idle"] = True
@@ -392,6 +522,8 @@ class IOSimulation:
         while self.events:
             at = self.events[0][0]
             dt = at - self.clock
+            if self.observer is not None and dt > 0:
+                self.observer(self, dt)
             if self.reader_state == "idle":
                 demand = bool(self.queue or self.unread)
                 self.reader_starved_s += dt * demand
@@ -400,10 +532,9 @@ class IOSimulation:
                 self.reader_state_s[self.reader_state] += dt
             idle = [x["id"] for x in self.shuttles if x["idle"]]
             self.shuttle_idle_s += dt * len(idle)
-            if idle and self.queue:
-                # idle while queued work exists only outside its own zone (pooling loss)
-                owners = {self.c.owner(p) for p in self.queue if p not in self.away}
-                self.shuttle_restricted_idle_s += dt * sum(1 for i in idle if i not in owners and owners)
+            if idle and self.free():
+                # idle while queued work exists that this shuttle is not allowed to fetch
+                self.shuttle_restricted_idle_s += dt * sum(1 for i in idle if not self.accessible(i))
             self.clock = at
             while self.events and self.events[0][0] <= at + 1e-10:
                 _, _, kind, payload = heapq.heappop(self.events)
@@ -437,6 +568,8 @@ class IOSimulation:
         return dict(
             scheduler=self.sched.name, requests=len(self.requests), trips=len(trips),
             cache_hits=self.cache_hits, fetch_trips=len(trips) - self.cache_hits, evictions=self.evictions,
+            dispatch=self.c.dispatch, helper_trips=self.helper_trips,
+            contended_steps=self.rail.contended_steps,
             requests_per_trip=len(self.requests) / len(trips),
             makespan_s=makespan, mean_s=mean(lats), p99_s=quantile(lats, .99),
             lower_bound_s=lb["bound_s"], lb_binding=lb["binding"], gap_vs_lb=makespan / lb["bound_s"] - 1,
@@ -483,6 +616,7 @@ def lower_bound(config, requests, merge=True):
     path = max(r.arrival_s - t0 + 2 * oneway(r.platter) + c.pick_s + c.handoff_s + c.load_mount_s
                + c.read_time(r.size_bytes) for r in requests)
     pooled = sum(per_shuttle) / c.shuttles
-    bounds = dict(reader=reader, zone=max(per_shuttle), path=path)
+    transport = max(per_shuttle) if c.dispatch == "zone" else pooled   # helpers may carry any zone's work
+    bounds = dict(reader=reader, transport=transport, path=path)
     binding = max(bounds, key=bounds.get)
     return dict(bound_s=bounds[binding], binding=binding, pooled_transport_s=pooled, **bounds)

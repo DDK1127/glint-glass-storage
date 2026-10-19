@@ -135,7 +135,27 @@ def place_contiguous(d, platters, seed=1, capacity=PLATTER_BYTES):
     return plat
 
 
-PLACEMENTS = {"contig_1tb": place_contiguous, "random_1gib": place}
+def place_contiguous_balanced(d, platters, seed=1, capacity=PLATTER_BYTES, rows=8):
+    """Like place_contiguous, but the platters are spread over the rack rows so that
+    every row (= Zone) receives about the same number of reads over the whole day
+    (largest platter first onto the least loaded row). Only short-term imbalance remains."""
+    pieces = d["lun"].astype(np.int64) * (1 << 40) + d["off"] // capacity
+    keys, inverse, counts = np.unique(pieces, return_inverse=True, return_counts=True)
+    per_row = platters // rows
+    if len(keys) > platters:
+        raise ValueError("Traced data exceeds library capacity")
+    rng = np.random.default_rng(seed)
+    free = [list(rng.permutation(per_row)) for _ in range(rows)]
+    load = np.zeros(rows)
+    slot = np.empty(len(keys), dtype=int)
+    for k in np.argsort(-counts, kind="stable"):
+        r = min((r for r in range(rows) if free[r]), key=lambda r: (load[r], r))
+        load[r] += counts[k]
+        slot[k] = r * per_row + free[r].pop()
+    return slot[inverse]
+
+
+PLACEMENTS = {"contig_1tb": place_contiguous, "contig_balanced": place_contiguous_balanced, "random_1gib": place}
 
 
 def sample(d, plat, start_s, span_s, count, rng):

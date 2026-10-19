@@ -91,7 +91,43 @@ class IOSchedulerTests(unittest.TestCase):
             self.assertLessEqual(len(sim.cache), 4)
             self.assertGreater(s["cache_hits"], 0)
 
+    def test_nonzone_lets_any_shuttle_fetch(self):
+        c = IOConfig(dispatch="nonzone")
+        reqs = make_burst(c, 120, 4, platters=10, window_s=60.0)
+        sim = IOSimulation(c, reqs, SilicaFIFO())
+        s = sim.run()
+        self.assertEqual(sum(len(t["requests"]) for t in sim.trips), len(reqs))
+        self.assertTrue(any(t["shuttle"] != c.owner(t["platter"]) for t in sim.trips))
+        self.assertEqual(s["shuttle_restricted_idle_s"], 0.0)
+        self.assertLessEqual(s["lower_bound_s"], s["makespan_s"] + 1e-6)
+
+    def test_work_stealing_helps_hot_zone_and_releases_helpers(self):
+        c = IOConfig()
+        row3 = [3 * c.slots_per_row + i for i in range(40)]
+        reqs = [Request(i, 0.0, p, MiB) for i, p in enumerate(row3)]
+        zone = IOSimulation(c, reqs, SilicaFIFO()).run()
+        sim = IOSimulation(replace(c, dispatch="zone_ws"), reqs, SilicaFIFO())
+        ws = sim.run()
+        self.assertEqual(zone["helper_trips"], 0)
+        self.assertGreater(ws["helper_trips"], 0)
+        self.assertEqual(sim.helpers, [0] * c.shuttles)
+        self.assertLess(ws["makespan_s"], zone["makespan_s"])
+
+    def test_gds_keeps_far_platter_lru_keeps_recent(self):
+        c = IOConfig(cache_slots=1)
+        near, far = 3 * c.slots_per_row, 7 * c.slots_per_row + 79   # row 3 is the reader's row
+        reqs = [Request(0, 0.0, far, MiB), Request(1, 300.0, near, MiB), Request(2, 600.0, far, MiB)]
+        lru = IOSimulation(c, reqs, SilicaFIFO()).run()
+        gds = IOSimulation(replace(c, cache_policy="gds"), reqs, SilicaFIFO()).run()
+        self.assertEqual(lru["cache_hits"], 0)    # LRU evicted the far platter for the near one
+        self.assertEqual(gds["cache_hits"], 1)    # GDS kept the far platter
+        self.assertLess(gds["fetch_trips"], lru["fetch_trips"])
+
     def test_invalid_parameters(self):
+        with self.assertRaises(ValueError):
+            replace(IOConfig(), cache_policy="lfu").validate()
+        with self.assertRaises(ValueError):
+            replace(IOConfig(), dispatch="pooled").validate()
         with self.assertRaises(ValueError):
             replace(IOConfig(), cache_slots=2, buffer_slots=0).validate()
         with self.assertRaises(ValueError):
