@@ -168,7 +168,18 @@ def sample(d, plat, start_s, span_s, count, rng):
     return d["t"][idx] - d["t"][idx[0]], plat[idx], d["size"][idx]
 
 
-def to_requests(rel_t, plat, size, time_scale=None):
+def to_requests(rel_t, plat, size, time_scale=None, offset=None):
     from glass_sim.io_scheduler import Request
-    return [Request(i, 0.0 if time_scale is None else float(rel_t[i] * time_scale), int(plat[i]), int(size[i]))
+    return [Request(i, 0.0 if time_scale is None else float(rel_t[i] * time_scale), int(plat[i]), int(size[i]),
+                    -1 if offset is None else int(offset[i]))
             for i in range(len(rel_t))]
+
+
+def sample_batch(d, plat, start_s, span_s, count, rng, capacity=PLATTER_BYTES):
+    """Like sample(), plus each read's offset within its platter (contiguous placements:
+    the platter holds one capacity-sized piece of a LUN, so offset = address mod capacity)."""
+    lo, hi = np.searchsorted(d["t"], [start_s, start_s + span_s])
+    if hi - lo < count:
+        raise ValueError("Not enough reads in the sampling span")
+    idx = np.sort(rng.choice(np.arange(lo, hi), count, replace=False))
+    return d["t"][idx] - d["t"][idx[0]], plat[idx], d["size"][idx], d["off"][idx] % capacity

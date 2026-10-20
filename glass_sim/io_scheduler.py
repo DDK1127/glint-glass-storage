@@ -51,6 +51,14 @@ class IOConfig:
     unload_s: float = 1.0
     read_mb_s: float = 30.0
     request_overhead_s: float = 1.0
+    # Track read model (Silica SOSP'23 §3, §5): a track is the minimum read unit, about
+    # O(100) data + O(10) redundancy sectors of ~100 kB each. With track_data_bytes > 0, a
+    # request costs reading every track it touches that this platter visit has not read
+    # yet, at track_read_bytes / read throughput + track_seek_s per track; requests that
+    # share a track share its read. request_overhead_s is then unused.
+    track_data_bytes: int = 0
+    track_read_bytes: int = 11_000_000
+    track_seek_s: float = 0.1
     # Platter cache next to the reader: after reading, a platter stays in one of
     # cache_slots places (LRU) instead of being returned; a later request for it
     # is moved straight into the read-ahead buffer (handoff_s), with no shuttle.
@@ -87,6 +95,8 @@ class IOConfig:
             raise ValueError("dispatch must be zone, zone_ws or nonzone")
         if not isinstance(self.ws_threshold, int) or self.ws_threshold < 0 or not isinstance(self.ws_max_helpers, int) or self.ws_max_helpers < 1:
             raise ValueError("Invalid work-stealing parameters")
+        if not isinstance(self.track_data_bytes, int) or self.track_data_bytes < 0 or self.track_read_bytes < self.track_data_bytes:
+            raise ValueError("Invalid track sizes")
         if not isinstance(self.cache_slots, int) or self.cache_slots < 0 or (self.cache_slots and not self.buffer_slots):
             raise ValueError("cache_slots must be >= 0 and needs a read-ahead buffer")
         if not isinstance(self.buffer_slots, int) or self.buffer_slots < 0:
@@ -112,6 +122,18 @@ class IOConfig:
     def read_time(self, size_bytes):
         return self.request_overhead_s + size_bytes / (self.read_mb_s * 1e6)
 
+    @property
+    def track_model(self):
+        return self.track_data_bytes > 0
+
+    def track_time(self):
+        return self.track_read_bytes / (self.read_mb_s * 1e6) + self.track_seek_s
+
+    def tracks(self, r):
+        """Track ids (within the platter) that request r touches."""
+        first = r.offset_bytes // self.track_data_bytes
+        return range(first, (r.offset_bytes + max(r.size_bytes, 1) - 1) // self.track_data_bytes + 1)
+
 
 @dataclass(frozen=True)
 class Request:
@@ -119,6 +141,7 @@ class Request:
     arrival_s: float
     platter: int
     size_bytes: int
+    offset_bytes: int = -1   # offset within the platter; needed by the track read model
 
 
 # Silica SOSP'23 §2: 58.7% of reads are <= 4 MiB; files > 256 MiB are < 2% of reads
@@ -202,6 +225,8 @@ class IOSimulation:
             raise ValueError("Requests must be arrival sorted")
         if any(not 0 <= r.platter < config.platters or r.size_bytes < 0 for r in requests):
             raise ValueError("Invalid request values")
+        if config.track_model and any(r.offset_bytes < 0 for r in requests):
+            raise ValueError("The track read model needs request offsets")
         self.c, self.requests, self.sched = config, requests, scheduler
         self.rail = Rail(config)
         self.clock = requests[0].arrival_s
@@ -228,6 +253,7 @@ class IOSimulation:
         self.helpers = [0] * config.shuttles   # zone_ws: non-owner shuttles working for each zone
         self.helper_trips = 0
         self.fetching = 0   # fetches started but not yet handed to the reader
+        self.tracks_read = 0
         # optional state trace: (time, reader_state, size of request being read, buffer, shuttles at gate, idle shuttles)
         self.trace = [] if record else None
         self.observer = observer   # optional callback(sim, dt): sees the state that held for the next dt seconds
@@ -268,6 +294,15 @@ class IOSimulation:
             return own
         zone = self.help_zone(sid, self.zone_backlog())
         return [p for p in free if self.c.owner(p) == zone] if zone is not None else []
+
+    def read_cost(self, trip, r):
+        if not self.c.track_model:
+            return self.c.read_time(r.size_bytes)
+        done = trip.setdefault("tracks_read", set())
+        new = [t for t in self.c.tracks(r) if t not in done]
+        done.update(new)
+        self.tracks_read += len(new)
+        return len(new) * self.c.track_time()
 
     def fetch_cost(self, platter):
         return sum(d for _, d in self.rail.path(Rail.READER, self.c.home(platter)))
@@ -472,7 +507,7 @@ class IOSimulation:
                 rid = trip["requests"][trip["served"]]
                 self.reader_req = rid
                 trip["served"] += 1
-                d = self.c.read_time(self.requests[rid].size_bytes)
+                d = self.read_cost(trip, self.requests[rid])
                 self.reader_busy_s += d
                 self.push(self.clock + d, "read_next", payload)
             else:
@@ -568,7 +603,7 @@ class IOSimulation:
         return dict(
             scheduler=self.sched.name, requests=len(self.requests), trips=len(trips),
             cache_hits=self.cache_hits, fetch_trips=len(trips) - self.cache_hits, evictions=self.evictions,
-            dispatch=self.c.dispatch, helper_trips=self.helper_trips,
+            dispatch=self.c.dispatch, helper_trips=self.helper_trips, tracks_read=self.tracks_read,
             contended_steps=self.rail.contended_steps,
             requests_per_trip=len(self.requests) / len(trips),
             makespan_s=makespan, mean_s=mean(lats), p99_s=quantile(lats, .99),
@@ -607,14 +642,20 @@ def lower_bound(config, requests, merge=True):
             one_way[p] = sum(d for _, d in rail.path(Rail.READER, c.home(p)))
         return one_way[p]
     t0 = requests[0].arrival_s
-    reads = sum(c.read_time(r.size_bytes) for r in requests)
+    if c.track_model:   # every distinct track must be read at least once (per request without merging)
+        keys = {(r.platter, t) for r in requests for t in c.tracks(r)} if merge else \
+               [(r.platter, t) for r in requests for t in c.tracks(r)]
+        reads = len(keys) * c.track_time()
+    else:
+        reads = sum(c.read_time(r.size_bytes) for r in requests)
+    own_read = (lambda r: len(c.tracks(r)) * c.track_time()) if c.track_model else (lambda r: c.read_time(r.size_bytes))
     visits = sorted({r.platter for r in requests}) if merge else [r.platter for r in requests]
     reader = sum(c.load_mount_s + c.unload_s for _ in visits) + reads
     per_shuttle = [0.0] * c.shuttles
     for p in visits:
         per_shuttle[c.owner(p)] += 2 * oneway(p) + c.pick_s + c.handoff_s + c.pick_s + c.place_s
     path = max(r.arrival_s - t0 + 2 * oneway(r.platter) + c.pick_s + c.handoff_s + c.load_mount_s
-               + c.read_time(r.size_bytes) for r in requests)
+               + own_read(r) for r in requests)
     pooled = sum(per_shuttle) / c.shuttles
     transport = max(per_shuttle) if c.dispatch == "zone" else pooled   # helpers may carry any zone's work
     bounds = dict(reader=reader, transport=transport, path=path)

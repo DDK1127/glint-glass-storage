@@ -123,6 +123,19 @@ class IOSchedulerTests(unittest.TestCase):
         self.assertEqual(gds["cache_hits"], 1)    # GDS kept the far platter
         self.assertLess(gds["fetch_trips"], lru["fetch_trips"])
 
+    def test_track_model_charges_each_track_once_per_visit(self):
+        c = IOConfig(track_data_bytes=10_000_000)
+        t = c.track_time()
+        same = [Request(0, 0.0, 5, 8192, 1_000), Request(1, 0.0, 5, 8192, 2_000_000)]   # one track
+        two = [Request(0, 0.0, 5, 8192, 1_000), Request(1, 0.0, 5, 8192, 25_000_000)]   # two tracks
+        a = IOSimulation(c, same, SilicaFIFO()).run()
+        b = IOSimulation(c, two, SilicaFIFO()).run()
+        self.assertEqual((a["tracks_read"], b["tracks_read"]), (1, 2))
+        self.assertAlmostEqual(b["makespan_s"] - a["makespan_s"], t)
+        self.assertAlmostEqual(t, 11_000_000 / 30e6 + 0.1)
+        with self.assertRaises(ValueError):
+            IOSimulation(c, [Request(0, 0.0, 5, 8192)], SilicaFIFO())
+
     def test_invalid_parameters(self):
         with self.assertRaises(ValueError):
             replace(IOConfig(), cache_policy="lfu").validate()

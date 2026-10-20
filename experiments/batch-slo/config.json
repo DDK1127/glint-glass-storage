@@ -1,0 +1,57 @@
+{
+  "question": "For one batch of real requests, how long does the library take with a throughput-based track read model, and what SLO is reasonable?",
+  "trace": "Fujitsu SYSTOR'17 VDI, 2016-02-22, LUNs 0,1,2,3,4,6, reads only",
+  "library": "640 slots, 1 TB platters, 1 reader, 8 Zone shuttles, B1 Silica scheduler, contention hold 0.5 s",
+  "read_model": {
+    "track_data_bytes": 10000000,
+    "track_read_bytes": 11000000,
+    "track_seek_s": 0.1,
+    "read_mb_s": [
+      30,
+      210
+    ],
+    "source": "Silica SOSP'23: a track is the minimum read unit (sec. 5) of O(100) data + O(10) redundancy sectors (sec. 5), each sector upwards of 100 kB (sec. 3); drives scale in multiples of 30 MB/s up to 210 MB/s (sec. 3). track_seek_s is an assumption."
+  },
+  "batch": {
+    "windows_start_hour": [
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+    ],
+    "interval_s": [
+      0.5,
+      1,
+      2,
+      5,
+      10
+    ],
+    "note": "a batch = every read in [start, start + interval) of the trace, issued at t=0; no sampling, real locality kept"
+  },
+  "variants": {
+    "no_queue": {
+      "buffer_slots": 0,
+      "cache_slots": 0
+    },
+    "queue_8": {
+      "buffer_slots": 8,
+      "cache_slots": 0
+    },
+    "queue_8_lru_8": {
+      "buffer_slots": 8,
+      "cache_slots": 8,
+      "cache_policy": "lru"
+    }
+  },
+  "slo_minutes": [
+    5,
+    10,
+    15,
+    20,
+    30,
+    60
+  ],
+  "seed": 1
+}
