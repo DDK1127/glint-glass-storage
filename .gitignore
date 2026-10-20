@@ -55,3 +55,6 @@ results/buffered-32rack/
 *.docx
 presentations/
 tmp/
+
+# SYSTOR17 VDI traces and caches (large, licensed; keep local)
+data/systor17/

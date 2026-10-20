@@ -1,7 +1,7 @@
 from dataclasses import replace
 import unittest
 
-from glass_sim.partition_feeder_study import Config, PartitionSimulation, Rail, Request, make_requests
+from glass_sim.partition_feeder_study import make_moving_hotspot, Config, PartitionSimulation, Rail, Request, make_requests
 
 
 class PartitionFeederTests(unittest.TestCase):
@@ -141,6 +141,30 @@ class PartitionFeederTests(unittest.TestCase):
         self.assertLess(slow['throughput_req_s'], base['throughput_req_s'])
         with self.assertRaises(ValueError):
             replace(free, contention_hold_s=-1.0).validate()
+
+    def test_moving_hotspot_share_and_rotation(self):
+        c = Config(shuttles=8, docking_bays=8)
+        reqs = make_moving_hotspot(c, 400, 3, rate=.05, hot_share=.5, dwell=100)
+        rows = [r.platter // c.slots_per_row for r in reqs]
+        hot = [max(set(rows[i:i+100]), key=rows[i:i+100].count) for i in range(0, 400, 100)]
+        self.assertTrue(all(a != b for a, b in zip(hot, hot[1:])))
+        self.assertTrue(all(rows[i:i+100].count(h) >= 35 for i, h in zip(range(0, 400, 100), hot)))
+        self.assertEqual(reqs, make_moving_hotspot(c, 400, 3, rate=.05, hot_share=.5, dwell=100))
+        with self.assertRaises(ValueError):
+            make_moving_hotspot(c, 10, 1, rate=.05, hot_share=.05)
+
+    def test_work_stealing_helps_hot_zone_and_releases_helpers(self):
+        base = Config(shuttles=8, buffer_slots=8, docking_bays=32, policy='zone')
+        reqs = make_moving_hotspot(base, 240, 9, rate=4/60, hot_share=.6, dwell=None)
+        zone, _, _ = PartitionSimulation(base, reqs).run()
+        sim = PartitionSimulation(replace(base, policy='zone_ws', ws_threshold=1, ws_max_helpers=3), reqs)
+        ws, jobs, _ = sim.run()
+        self.assertEqual(zone['helper_trips'], 0)
+        self.assertGreater(ws['helper_trips'], 0)
+        self.assertEqual(sim.helpers, [0] * 8)
+        self.assertLess(ws['p99_s'], zone['p99_s'])
+        with self.assertRaises(ValueError):
+            replace(base, policy='zone_ws', shuttles=6).validate()
 
 if __name__ == '__main__':
     unittest.main()

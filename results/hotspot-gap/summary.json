@@ -1,0 +1,84 @@
+{
+  "config": {
+    "output_dir": "results/hotspot-gap",
+    "registered": "2026-10-05, written before the full run",
+    "questions": [
+      "Q1 How much does short-term zone imbalance cost Zone (vs the same system with balanced load)?",
+      "Q2 How much of that gap does Silica-style work stealing recover?",
+      "Q3 Where does work stealing fall short at small scale (reaction to moving hotspots, extra travel, tuning, shuttle count)?"
+    ],
+    "drop_rule": "If best-tuned Zone + work stealing is within ~10% of the balanced reference p99 at hot shares <= 47%, the motivation is not supported.",
+    "seeds": [
+      101,
+      202,
+      303,
+      404,
+      505
+    ],
+    "requests": 2400,
+    "capacity_requests": 384,
+    "offered_load": 0.75,
+    "shuttles": [
+      2,
+      4,
+      8
+    ],
+    "buffer_per_shuttle": 1,
+    "model": {
+      "docking_bays": 32,
+      "length_m": 32.0,
+      "read_s": 8.0
+    },
+    "contention_holds_s": [
+      0.5,
+      0.0
+    ],
+    "hot_shares": [
+      0.125,
+      0.3,
+      0.47,
+      0.6
+    ],
+    "dwells": [
+      100,
+      500,
+      null
+    ],
+    "ws_variants": [
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        4,
+        1
+      ],
+      [
+        4,
+        3
+      ]
+    ],
+    "notes": [
+      "Zone + work stealing only; Non-Zone is deliberately excluded from this round.",
+      "hot_share = share of requests on one rack row; 0.125 = uniform. 0.47 = Azure trace P95 busiest-zone share over 100-request windows.",
+      "Balanced reference = Zone at the same N, rate and congestion cost under uniform load.",
+      "Arrival rate = offered_load x closed-batch throughput of balanced Zone at that N and congestion cost.",
+      "Work stealing reconstructed from Silica SOSP'23 Sec. 4; all variants run, best per cell reported. Helper cap is effectively min(H, N-1).",
+      "Primary congestion cost 0.5 s; 0 s kept as sensitivity. Finite 2400-request episodes, not steady state."
+    ]
+  },
+  "rates_req_min": {
+    "N2_hold0.5": 1.3248803042551969,
+    "N2_hold0": 1.3269959807909044,
+    "N4_hold0.5": 2.3555930387911013,
+    "N4_hold0": 2.4026388484230576,
+    "N8_hold0.5": 3.5667814712026678,
+    "N8_hold0": 3.6590420458633526
+  },
+  "run_count": 1500,
+  "wall_s": 697.1852013749885
+}

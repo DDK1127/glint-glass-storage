@@ -1,0 +1,16 @@
+{
+  "question": "Light vs heavy load taken from the trace itself: one 1-second batch from the quietest vs the busiest hour",
+  "trace": "Fujitsu SYSTOR'17 VDI, 2016-02-22, LUNs 0,1,2,3,4,6, reads only",
+  "library": "640 slots, 1 TB platters, 1 reader, 8 Zone shuttles, B1 Silica scheduler, contention hold 0.5 s",
+  "read_model": {"track_data_bytes": 10000000, "track_read_bytes": 11000000, "track_seek_s": 0.1, "read_mb_s": [30, 210]},
+  "loads": {"light": {"hour": 15, "note": "quietest full hour, 1,427 reads/s on average"},
+            "heavy": {"hour": 9, "note": "busiest hour, 4,824 reads/s on average"}},
+  "batch": {"interval_s": 1, "offsets_min": [0, 10, 20, 30, 40, 50],
+            "note": "a batch = every read in a 1-second interval starting at hour + offset, issued at t=0"},
+  "variants": {
+    "no_queue": {"buffer_slots": 0, "cache_slots": 0},
+    "queue_8": {"buffer_slots": 8, "cache_slots": 0},
+    "queue_8_lru_8": {"buffer_slots": 8, "cache_slots": 8, "cache_policy": "lru"}
+  },
+  "seed": 1
+}

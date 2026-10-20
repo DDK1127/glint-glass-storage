@@ -1,0 +1,51 @@
+{
+ "light": {
+  "reader_idle_with_pending_share": 0.4179352919979371,
+  "stuck": {
+   "platter being fetched (shuttle on the way)": 0.5944943205943386,
+   "platter at home, its shuttle busy returning": 0.4027556588629484,
+   "platter still on its way home (just read)": 0.0024687280292238064,
+   "platter waiting at the reader gate": 0.00028129251348925165
+  },
+  "queue_length_share": {
+   "0": 0.7880337258716367,
+   "1": 0.15560170415473348,
+   "2": 0.04311885734191953,
+   "3": 0.01045991736745621,
+   "4": 0.0018817021400045018,
+   "5": 0.0006501866746131365,
+   "6": 0.00022710417798051322,
+   "7": 2.6802271675825315e-05
+  },
+  "shuttle_activity": {
+   "fetching": 0.4179542093173044,
+   "returning": 0.4165143420447192,
+   "idle": 0.16457745026677506,
+   "waiting at reader": 0.000953998371201238
+  }
+ },
+ "heavy": {
+  "reader_idle_with_pending_share": 0.03871597998013232,
+  "stuck": {
+   "platter being fetched (shuttle on the way)": 0.7783497147680372,
+   "platter at home, its shuttle busy returning": 0.22165028523196276
+  },
+  "queue_length_share": {
+   "0": 0.09522769489750105,
+   "1": 0.0365328736007547,
+   "2": 0.030127523658393652,
+   "3": 0.018750780050585704,
+   "4": 0.013505195994517542,
+   "5": 0.012094034614363832,
+   "6": 0.013424950823292623,
+   "7": 0.05531373760061954,
+   "8": 0.7250232087599677
+  },
+  "shuttle_activity": {
+   "waiting at reader": 0.44928947163784966,
+   "fetching": 0.2492675353499103,
+   "returning": 0.22742092723255214,
+   "idle": 0.07402206577968781
+  }
+ }
+}

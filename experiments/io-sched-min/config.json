@@ -1,0 +1,12 @@
+{
+  "question": "Under a restore-style burst, how far is Silica's scheduler (B1) from a makespan lower bound, and where does the time go?",
+  "system": "1 reader, 8 rows x 80 slots, 8 Zone shuttles (one row each), buffer 8, contention hold 0.5 s (IOConfig defaults)",
+  "workload": "400 file reads arriving at t=0; sizes from SILICA_SIZE_MIX (Silica SOSP'23 section 2 shares)",
+  "scenarios": {"independent": null, "restore_k160": 160, "restore_k64": 64, "restore_k16": 16},
+  "scenario_note": "restore_kN spreads the files over N random platters (Silica spreads a platter-set apart, section 6); independent puts every file on its own random platter",
+  "schedulers": ["B0_fifo", "B1_silica"],
+  "requests": 400,
+  "seeds": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "drop_rule": "If B1 is within 10% of the lower bound (median gap_vs_lb < 0.10) in every scenario, there is no scheduling headroom and the direction is dropped.",
+  "lower_bound_note": "The bound ignores empty repositioning, congestion and gate queuing, so part of any gap is unreachable; time breakdowns say which part."
+}

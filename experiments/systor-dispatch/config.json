@@ -1,0 +1,17 @@
+{
+  "question": "On real multi-LUN traffic, how differently do Zone, Zone + work stealing and Non-Zone feed one shared FIFO reader queue, and how does that depend on zone imbalance and on the per-request read overhead?",
+  "trace": "Fujitsu SYSTOR'17 VDI, 2016-02-22 07-20 JST, LUNs 0,1,2,3,4,6, reads only (README hour-change loss dropped)",
+  "library": "640 slots (8 rows x 80), 1 TB platters, 1 reader, 8 shuttles, FIFO read-ahead queue K=8, no cache, B1 Silica scheduler, contention hold 0.5 s",
+  "placements": {
+    "contig_1tb": "natural: each LUN written sequentially, platters at random rack positions (one zone gets ~36% of reads all day)",
+    "contig_balanced": "same sequential platters spread so every zone gets ~12.5% of the day's reads; only short-term imbalance remains (busiest zone > 25% in 13% of 10-min windows)",
+    "random_1gib": "every 1 GiB extent on a random platter: no zone imbalance, little locality"
+  },
+  "dispatch": ["zone", "zone_ws", "nonzone"],
+  "ws_params": {"ws_threshold": 2, "ws_max_helpers": 2, "note": "Silica's thresholds are not public; same defaults as the earlier hotspot study"},
+  "request_overhead_s": [0.1, 0.25, 0.5, 1.0],
+  "sampling": {"windows_start_hour": [8, 9, 10, 11, 12, 13], "span_s": 600, "requests": 2000},
+  "load": 0.75,
+  "load_note": "arrival rate = 0.75 x Zone's throughput with all requests at t=0, per placement and overhead; the same arrivals are given to all three dispatch policies",
+  "seed": 1
+}

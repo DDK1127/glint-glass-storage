@@ -42,18 +42,24 @@ class Config:
     docking_bays: int = 8
     lookahead: int = 16
     aging_s: float = 120.0
+    # Zone + work stealing (reconstructed from Silica SOSP'23 §4, details not public):
+    # an idle shuttle with no work in its own zone may serve the most backlogged
+    # zone when that backlog exceeds ws_threshold; at most ws_max_helpers
+    # non-owner shuttles work in one zone at a time.
+    ws_threshold: int = 2
+    ws_max_helpers: int = 2
 
     def validate(self):
         if self.rows != 8 or not isinstance(self.shuttles, int) or not 1 <= self.shuttles <= 32:
             raise ValueError("Eight physical rack rows; 1-32 shuttles")
-        if self.policy not in ("zone", "nonzone_fifo", "nonzone_local"):
+        if self.policy not in ("zone", "zone_ws", "nonzone_fifo", "nonzone_local"):
             raise ValueError("Unknown policy")
         # Zone splits the eight rows evenly, so only divisors of the row count apply.
-        if self.policy == "zone" and self.shuttles not in (1, 2, 4, 8):
+        if self.policy in ("zone", "zone_ws") and self.shuttles not in (1, 2, 4, 8):
             raise ValueError("Zone ownership requires 1/2/4/8 shuttles (even contiguous row split)")
-        for name in ("buffer_slots", "output_slots", "docking_bays", "slots_per_row", "lookahead"):
+        for name in ("buffer_slots", "output_slots", "docking_bays", "slots_per_row", "lookahead", "ws_threshold", "ws_max_helpers"):
             value = getattr(self, name)
-            if not isinstance(value, int) or value < (0 if name == "buffer_slots" else 1):
+            if not isinstance(value, int) or value < (0 if name in ("buffer_slots", "ws_threshold") else 1):
                 raise ValueError(f"Invalid {name}")
         if self.docking_bays < self.shuttles:
             raise ValueError("This model provisions docking bays for the whole fleet")
@@ -100,6 +106,33 @@ def make_requests(config, count, seed, pattern="uniform", rate=None):
         else:
             row = min(7, int(draw * 8))
         requests.append(Request(i, now, row * config.slots_per_row + slot))
+    return requests
+
+
+def make_moving_hotspot(config, count, seed, rate, hot_share, dwell=None):
+    """Online Poisson requests where one rack row receives hot_share of them.
+
+    The hot row jumps to a different random row every `dwell` requests
+    (None keeps it fixed). hot_share = 1/rows is the uniform workload.
+    Calibrated against the Azure trace: busiest-zone share ~47% over
+    100-request windows (results/natural-trace-skew-rq1).
+    """
+    rows = config.rows
+    if count < 1 or rate <= 0 or not 1 / rows - 1e-12 <= hot_share <= 1 or (dwell is not None and dwell < 1):
+        raise ValueError("Invalid moving-hotspot workload")
+    location = random.Random(seed)
+    timing = random.Random(seed + 1000003)
+    hot = location.randrange(rows)
+    requests, now = [], 0.0
+    for i in range(count):
+        if dwell is not None and i and i % dwell == 0:
+            hot = location.choice([r for r in range(rows) if r != hot])
+        now += timing.expovariate(rate)
+        if location.random() < hot_share:
+            row = hot
+        else:
+            row = location.choice([r for r in range(rows) if r != hot])
+        requests.append(Request(i, now, row * config.slots_per_row + location.randrange(config.slots_per_row)))
     return requests
 
 
@@ -252,6 +285,8 @@ class PartitionSimulation:
         self.max_input = self.max_output = self.max_dock = 0
         self.input_slot_time = self.reader_idle_demand = self.restricted_idle = 0.0
         self.pair_evaluations = 0
+        self.helpers = [0] * config.shuttles
+        self.helper_trips = 0
         self.reader_busy_s = 0.0
         self.last_read_s = self.last_unload_s = self.clock
         for r in requests:
@@ -268,7 +303,20 @@ class PartitionSimulation:
             self.timeline.append(dict(resource=resource, phase=phase, start_s=start, end_s=end, request=jid))
 
     def eligible(self, sid, platter):
-        return self.c.policy != "zone" or sid == self.c.owner(platter)
+        return self.c.policy not in ("zone", "zone_ws") or sid == self.c.owner(platter)
+
+    def zone_backlog(self):
+        backlog = [0] * self.c.shuttles
+        for i in self.pending:
+            platter = self.requests[i].platter
+            if platter not in self.away:
+                backlog[self.c.owner(platter)] += 1
+        return backlog
+
+    def can_help(self, sid, zone, backlog):
+        """Work-stealing trigger: own zone empty, target backlog above threshold, helper cap."""
+        return (self.c.policy == "zone_ws" and zone != sid and backlog[sid] == 0
+                and backlog[zone] > self.c.ws_threshold and self.helpers[zone] < self.c.ws_max_helpers)
 
     def move(self, sid, jid, target, phase, event):
         shuttle, job = self.shuttles[sid], self.jobs[jid]
@@ -286,11 +334,20 @@ class PartitionSimulation:
             if job["return_assigned"]:
                 continue
             options = [s for s in self.shuttles if s["idle"] and self.eligible(s["id"], job["platter"])]
+            helper_zone = None
+            if not options and self.c.policy == "zone_ws":
+                zone, backlog = self.c.owner(job["platter"]), self.zone_backlog()
+                options = [s for s in self.shuttles if s["idle"] and self.can_help(s["id"], zone, backlog)]
+                helper_zone = zone if options else None
             if not options:
                 continue
             shuttle = min(options, key=lambda s: (self.rail.estimate(s["position"], Rail.READER, self.clock)[1], s["id"]))
             shuttle["idle"] = False
             job["return_assigned"] = True
+            job["return_helper"] = helper_zone
+            if helper_zone is not None:
+                self.helpers[helper_zone] += 1
+                self.helper_trips += 1
             self.move(shuttle["id"], jid, Rail.READER, "to_output", "at_output")
             changed = True
         while True:
@@ -313,17 +370,47 @@ class PartitionSimulation:
                     finish = self.rail.estimate(self.c.home(platter), Rail.READER, pickup)[1]
                     options.append((finish, self.requests[jid].arrival_s, jid, s["id"]))
             _, _, jid, sid = min(options)
-            r = self.requests[jid]
-            self.pending.remove(jid)
-            self.away.add(r.platter)
-            self.shuttles[sid]["idle"] = False
-            self.jobs[jid] = dict(request=jid, platter=r.platter, shuttle=sid, arrival_s=r.arrival_s,
-                                  dispatch_s=self.clock, movement_s=0.0, traffic_wait_s=0.0,
-                                  delivery_wait_s=0.0, output_block_s=0.0, return_assigned=False,
-                                  ready=False, read_done_s=None, returned_s=None)
-            self.move(sid, jid, self.c.home(r.platter), "fetch", "at_platter")
+            self.start_fetch(jid, sid)
             changed = True
+        if self.c.policy == "zone_ws":
+            changed = self.steal() or changed
         return changed
+
+    def start_fetch(self, jid, sid, helper_zone=None):
+        r = self.requests[jid]
+        self.pending.remove(jid)
+        self.away.add(r.platter)
+        self.shuttles[sid]["idle"] = False
+        self.jobs[jid] = dict(request=jid, platter=r.platter, shuttle=sid, arrival_s=r.arrival_s,
+                              dispatch_s=self.clock, movement_s=0.0, traffic_wait_s=0.0,
+                              delivery_wait_s=0.0, output_block_s=0.0, return_assigned=False,
+                              ready=False, read_done_s=None, returned_s=None,
+                              fetch_helper=helper_zone, return_helper=None)
+        if helper_zone is not None:
+            self.helpers[helper_zone] += 1
+            self.helper_trips += 1
+        self.move(sid, jid, self.c.home(r.platter), "fetch", "at_platter")
+
+    def steal(self):
+        """Idle shuttles with an empty own zone help the most backlogged zone."""
+        changed = False
+        while True:
+            backlog = self.zone_backlog()
+            pairs = [(s, z) for s in self.shuttles if s["idle"]
+                     for z in range(self.c.shuttles) if self.can_help(s["id"], z, backlog)]
+            if not pairs:
+                return changed
+            zone = max({z for _, z in pairs}, key=lambda z: (backlog[z], -z))
+            jid = next(i for i in self.pending if self.requests[i].platter not in self.away
+                       and self.c.owner(self.requests[i].platter) == zone)
+            platter = self.requests[jid].platter
+            def finish(s):
+                self.pair_evaluations += 1
+                pickup = self.rail.estimate(s["position"], self.c.home(platter), self.clock)[1] + self.c.pick_s
+                return self.rail.estimate(self.c.home(platter), Rail.READER, pickup)[1]
+            helper = min((s for s, z in pairs if z == zone), key=lambda s: (finish(s), s["id"]))
+            self.start_fetch(jid, helper["id"], helper_zone=zone)
+            changed = True
 
     def start_read(self, jid):
         self.reader_state, self.reader_job = "read", jid
@@ -406,6 +493,8 @@ class PartitionSimulation:
             self.move(sid, jid, Rail.READER, "delivery", "at_reader")
         elif kind == "handed_off":
             sid, jid = payload
+            if self.jobs[jid]["fetch_helper"] is not None:
+                self.helpers[self.jobs[jid]["fetch_helper"]] -= 1
             self.gate_busy = False
             self.shuttles[sid]["idle"] = True
             self.jobs[jid]["ready"] = True
@@ -427,6 +516,8 @@ class PartitionSimulation:
             self.move(sid, jid, self.c.home(self.jobs[jid]["platter"]), "return", "at_home")
         elif kind == "returned":
             sid, jid = payload
+            if self.jobs[jid]["return_helper"] is not None:
+                self.helpers[self.jobs[jid]["return_helper"]] -= 1
             self.jobs[jid]["returned_s"] = self.clock
             self.away.remove(self.jobs[jid]["platter"])
             self.shuttles[sid]["idle"] = True
@@ -492,7 +583,7 @@ class PartitionSimulation:
                       input_occupancy_s=self.input_slot_time, max_input=self.max_input, max_output=self.max_output,
                       max_dock=self.max_dock, pair_evaluations=self.pair_evaluations,
                       route_queries=self.rail.queries, reservation_checks=self.rail.checks,
-                      contended_steps=self.rail.contended_steps)
+                      contended_steps=self.rail.contended_steps, helper_trips=self.helper_trips)
         prefetch_leads = [j['read_start_s'] - j['handoff_done_s'] for j in jobs if j['read_start_s'] - j['handoff_done_s'] > 1e-8]
         result['prefetch_hit_fraction'] = len(prefetch_leads) / len(jobs)
         result['prefetch_lead_mean_s'] = mean(prefetch_leads) if prefetch_leads else 0.0
